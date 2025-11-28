@@ -1,12 +1,19 @@
+// hooks/api.ts
 
-import { useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
+import {
+    useMutation,
+    UseMutationResult,
+    useQuery,
+    useQueryClient,
+    UseQueryOptions,
+    UseQueryResult
+} from '@tanstack/react-query';
 import apiService from '../services/api';
 import * as ApiTypes from '../types/api';
 
 // ============================================================================
 // 1. QUERY KEYS
 // ============================================================================
-// A centralized place to store query keys for easy reference and refetching.
 
 export const queryKeys = {
     // Prediction Details
@@ -23,7 +30,29 @@ export const queryKeys = {
 };
 
 // ============================================================================
-// 2. QUERY HOOKS (GET Requests)
+// 2. QUERY HOOK FACTORY
+// ============================================================================
+
+/**
+ * A factory function to simplify creating standard useQuery hooks for GET requests.
+ * @param key - The TanStack Query key.
+ * @param fetcher - The API service function.
+ * @param options - Optional useQuery options (e.g., staleTime, refetchInterval).
+ */
+const createQueryHook = <TData>(
+    key: readonly (string | number | object)[], 
+    fetcher: () => Promise<TData>,
+    options?: Omit<UseQueryOptions<TData, Error, TData, any>, 'queryKey' | 'queryFn'>
+): UseQueryResult<TData, Error> => {
+    return useQuery({
+        queryKey: key,
+        queryFn: fetcher,
+        ...options,
+    });
+};
+
+// ============================================================================
+// 3. QUERY HOOKS (GET Requests)
 // ============================================================================
 
 /**
@@ -31,10 +60,11 @@ export const queryKeys = {
  * @returns HealthResponse
  */
 export const useHealthCheck = (): UseQueryResult<ApiTypes.HealthResponse, Error> => {
-    return useQuery({
-        queryKey: queryKeys.health,
-        queryFn: apiService.getHealthCheck,
-    });
+    // Uses the hook factory
+    return createQueryHook<ApiTypes.HealthResponse>(
+        queryKeys.health,
+        apiService.getHealthCheck
+    );
 };
 
 /**
@@ -45,14 +75,14 @@ export const useHealthCheck = (): UseQueryResult<ApiTypes.HealthResponse, Error>
 export const usePredictionDetail = (
     predictionId: number | null
 ): UseQueryResult<ApiTypes.PredictionDetailResponse, Error> => {
-    // Only fetch if predictionId is a valid number
-    const validPredictionId = typeof predictionId === 'number' && predictionId > 0;
     
-    return useQuery({
-        queryKey: queryKeys.predictionDetail(predictionId!),
-        queryFn: () => apiService.getPredictionDetail(predictionId!),
-        enabled: validPredictionId,
-    });
+    const isPredictionIdValid = typeof predictionId === 'number' && predictionId > 0;
+    
+    return createQueryHook<ApiTypes.PredictionDetailResponse>(
+        queryKeys.predictionDetail(predictionId!),
+        () => apiService.getPredictionDetail(predictionId!),
+        { enabled: isPredictionIdValid }
+    );
 };
 
 /**
@@ -60,11 +90,11 @@ export const usePredictionDetail = (
  * @returns StatsResponse
  */
 export const useApiStats = (): UseQueryResult<ApiTypes.StatsResponse, Error> => {
-    return useQuery({
-        queryKey: queryKeys.stats,
-        queryFn: apiService.getApiStats,
-        staleTime: 60 * 1000 * 5, // 5 minutes
-    });
+    return createQueryHook<ApiTypes.StatsResponse>(
+        queryKeys.stats,
+        apiService.getApiStats,
+        { staleTime: 60 * 1000 * 5 } // 5 minutes
+    );
 };
 
 /**
@@ -72,10 +102,10 @@ export const useApiStats = (): UseQueryResult<ApiTypes.StatsResponse, Error> => 
  * @returns CurrentServiceResponse
  */
 export const useCurrentService = (): UseQueryResult<ApiTypes.CurrentServiceResponse, Error> => {
-    return useQuery({
-        queryKey: queryKeys.currentService,
-        queryFn: apiService.getCurrentService,
-    });
+    return createQueryHook<ApiTypes.CurrentServiceResponse>(
+        queryKeys.currentService,
+        apiService.getCurrentService
+    );
 };
 
 /**
@@ -86,15 +116,15 @@ export const useCurrentService = (): UseQueryResult<ApiTypes.CurrentServiceRespo
 export const useRecentCorrections = (
     limit: number = 10
 ): UseQueryResult<ApiTypes.RecentCorrectionsResponse, Error> => {
-    return useQuery({
-        queryKey: queryKeys.recentCorrections(limit),
-        queryFn: () => apiService.getRecentCorrections(limit),
-    });
+    return createQueryHook<ApiTypes.RecentCorrectionsResponse>(
+        queryKeys.recentCorrections(limit),
+        () => apiService.getRecentCorrections(limit)
+    );
 };
 
 
 // ============================================================================
-// 3. MUTATION HOOKS (POST Requests)
+// 4. MUTATION HOOKS (POST Requests)
 // ============================================================================
 
 /**
@@ -115,10 +145,8 @@ export const usePredictPositionMutation = (): UseMutationResult<
         mutationFn: ({ imageUri, fileName }) => 
             apiService.predictChessPosition(imageUri, fileName),
         
-
         onSuccess: (data) => {
             console.log(`Prediction successful! ID: ${data.prediction_id}`);
-            
         },
     });
 };
@@ -132,6 +160,8 @@ export const useCorrectionMutation = (): UseMutationResult<
     Error, 
     ApiTypes.CorrectionRequest
 > => {
+    const queryClient = useQueryClient();
+
     return useMutation<
         ApiTypes.CorrectionResponse, 
         Error, 
@@ -139,9 +169,11 @@ export const useCorrectionMutation = (): UseMutationResult<
     >({
         mutationFn: apiService.submitCorrection,
         
-        onSuccess: (data, variables, context) => {
+        onSuccess: (data, variables) => {
             console.log(`Correction submitted for Prediction ID: ${data.prediction_id}`);
-
+            // Invalidate the detail view and recent corrections list
+            queryClient.invalidateQueries({ queryKey: queryKeys.predictionDetail(variables.prediction_id) });
+            queryClient.invalidateQueries({ queryKey: ['recentCorrections'] });
         },
     });
 };

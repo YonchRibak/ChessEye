@@ -18,6 +18,33 @@ const api: AxiosInstance = axios.create({
     timeout: 10000, // 10 seconds timeout
 });
 
+api.interceptors.response.use(
+    (response) => response, // Pass successful responses straight through
+    (error) => {
+        if (error.response) {
+            const errorData = error.response.data;
+            const status = error.response.status;
+
+           
+            if (errorData && errorData.error) {
+                const customError = new Error(errorData.error || 'API Request Failed');
+                (customError as any).status = status;
+                (customError as any).detail = errorData.detail;
+                return Promise.reject(customError);
+            }
+            
+            // Handle generic HTTP errors (e.g., 404, 500)
+            console.error(`HTTP Error ${status}:`, errorData);
+            return Promise.reject(new Error(`Server Error: Status ${status}`));
+        } else if (error.request) {
+            // Request was made but no response received (e.g., network timeout, server down)
+            return Promise.reject(new Error('Network Error: Could not reach the API server.'));
+        }
+        
+        // Let other errors pass through
+        return Promise.reject(error);
+    }
+);
 
 // ============================================================================
 // 2. API SERVICE FUNCTIONS
