@@ -20,7 +20,8 @@ export function Navbar() {
       borderBottomWidth={1}
       borderBottomColor="$gray6"
       paddingHorizontal="$4"
-      paddingVertical="$3"
+      paddingTop="$10"
+      paddingBottom="$3"
       alignItems="center"
       justifyContent="space-between"
       shadowColor="$shadowColor"
