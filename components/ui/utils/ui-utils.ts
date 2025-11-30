@@ -4,7 +4,6 @@ export class UiUtils {
         case 'primary':
             return {
             backgroundColor: '$blue10',
-            color: 'white',
             borderColor: '$blue10',
             hoverStyle: { backgroundColor: '$blue11' },
             pressStyle: { backgroundColor: '$blue9' },
@@ -12,7 +11,6 @@ export class UiUtils {
         case 'secondary':
             return {
             backgroundColor: '$gray10',
-            color: 'white',
             borderColor: '$gray10',
             hoverStyle: { backgroundColor: '$gray11' },
             pressStyle: { backgroundColor: '$gray9' },
@@ -20,7 +18,6 @@ export class UiUtils {
         case 'outline':
             return {
             backgroundColor: 'transparent',
-            color: '$blue10',
             borderWidth: 1,
             borderColor: '$blue10',
             hoverStyle: { backgroundColor: '$blue2' },
@@ -29,7 +26,6 @@ export class UiUtils {
         case 'ghost':
             return {
             backgroundColor: 'transparent',
-            color: '$gray12',
             borderColor: 'transparent',
             hoverStyle: { backgroundColor: '$gray3' },
             pressStyle: { backgroundColor: '$gray4' },
@@ -37,7 +33,6 @@ export class UiUtils {
         case 'danger':
             return {
             backgroundColor: '$red10',
-            color: 'white',
             borderColor: '$red10',
             hoverStyle: { backgroundColor: '$red11' },
             pressStyle: { backgroundColor: '$red9' },

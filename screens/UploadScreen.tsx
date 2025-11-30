@@ -1,12 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
-import { Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Pressable } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
-import { Button } from '../components/ui/button';
 import { usePredictPositionMutation } from '../hooks/api';
 import type { RootStackParamList } from '../navigation/AppNavigator';
+import apiService from '../services/api';
 import { ImageUtils } from '../utils/image-utils';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Upload'>;
@@ -19,6 +19,28 @@ export default function UploadScreen() {
   const navigation = useNavigation<NavigationProp>();
   const predictMutation = usePredictPositionMutation();
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Test API connectivity on mount
+  useEffect(() => {
+    const testConnection = async () => {
+      try {
+        console.log('[UploadScreen] Testing API connection...');
+        console.log('[UploadScreen] Attempting to reach:', apiService.getHealthCheck.toString().includes('http') ? 'checking...' : 'API endpoint');
+        const health = await apiService.getHealthCheck();
+        console.log('[UploadScreen] ✅ API connection successful:', health);
+        Alert.alert('API Connected', `Successfully connected to API server!\n\nStatus: ${health.status}`);
+      } catch (error) {
+        console.error('[UploadScreen] ❌ API connection failed:', error);
+        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+        Alert.alert(
+          'API Connection Failed',
+          `Cannot reach API server.\n\nPlease check:\n1. PC and phone on same WiFi\n2. Firewall allows port 8081\n3. Test in phone browser: http://10.0.0.4:8081/health\n\nError: ${errorMsg}`,
+          [{ text: 'OK' }]
+        );
+      }
+    };
+    testConnection();
+  }, []);
 
   const handleImageSelected = async (uri: string, fileName: string) => {
     setIsProcessing(true);
@@ -86,33 +108,45 @@ export default function UploadScreen() {
 
       {/* Action Buttons */}
       <YStack gap="$4" width="100%" maxWidth={400}>
-        <Button
-          variant="primary"
-          size="$6"
-          onPress={openCamera}
-          disabled={isProcessing}
-        >
-          <XStack gap="$3" alignItems="center">
-            <Ionicons name="camera" size={24} color="white" />
-            <Text color="white" fontSize="$5" fontWeight="600">
-              Take Photo
-            </Text>
-          </XStack>
-        </Button>
+        <Pressable onPress={openCamera} disabled={isProcessing}>
+          {({ pressed }) => (
+            <YStack
+              backgroundColor="$blue10"
+              paddingVertical="$4"
+              paddingHorizontal="$5"
+              borderRadius="$4"
+              opacity={pressed ? 0.8 : isProcessing ? 0.5 : 1}
+            >
+              <XStack gap="$3" alignItems="center" justifyContent="center">
+                <Ionicons name="camera" size={24} color="white" />
+                <Text color="white" fontSize="$5" fontWeight="600">
+                  Take Photo
+                </Text>
+              </XStack>
+            </YStack>
+          )}
+        </Pressable>
 
-        <Button
-          variant="outline"
-          size="$6"
-          onPress={openGallery}
-          disabled={isProcessing}
-        >
-          <XStack gap="$3" alignItems="center">
-            <Ionicons name="images" size={24} color="$blue10" />
-            <Text color="$blue10" fontSize="$5" fontWeight="600">
-              Choose from Gallery
-            </Text>
-          </XStack>
-        </Button>
+        <Pressable onPress={openGallery} disabled={isProcessing}>
+          {({ pressed }) => (
+            <YStack
+              backgroundColor="transparent"
+              paddingVertical="$4"
+              paddingHorizontal="$5"
+              borderRadius="$4"
+              borderWidth={1}
+              borderColor="$blue10"
+              opacity={pressed ? 0.8 : isProcessing ? 0.5 : 1}
+            >
+              <XStack gap="$3" alignItems="center" justifyContent="center">
+                <Ionicons name="images" size={24} color="#0080ff" />
+                <Text color="$blue10" fontSize="$5" fontWeight="600">
+                  Choose from Gallery
+                </Text>
+              </XStack>
+            </YStack>
+          )}
+        </Pressable>
       </YStack>
 
       {/* Processing Indicator */}

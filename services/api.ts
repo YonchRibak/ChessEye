@@ -1,14 +1,18 @@
 
 import axios, { AxiosInstance } from 'axios';
+import Constants from 'expo-constants';
 import * as ApiTypes from '../types/api';
 
 // ============================================================================
 // 1. CONFIGURATION
 // ============================================================================
 
-// TODO: Replace with your actual API base URL.
-// In a real Expo app, you might get this from an environment variable.
-const API_BASE_URL = 'http://YOUR_LOCAL_IP:8000'; // Example for local development
+// Get API base URL from environment configuration
+const API_BASE_URL = Constants.expoConfig?.extra?.apiBaseUrl || 'http://localhost:8081';
+
+// Log API URL for debugging
+console.log('[API Config] Base URL:', API_BASE_URL);
+console.log('[API Config] Expo Config:', Constants.expoConfig?.extra);
 
 const api: AxiosInstance = axios.create({
     baseURL: API_BASE_URL,
@@ -38,6 +42,12 @@ api.interceptors.response.use(
             return Promise.reject(new Error(`Server Error: Status ${status}`));
         } else if (error.request) {
             // Request was made but no response received (e.g., network timeout, server down)
+            console.error('[API Error] Network error - Request details:', {
+                baseURL: API_BASE_URL,
+                url: error.config?.url,
+                method: error.config?.method,
+                message: error.message
+            });
             return Promise.reject(new Error('Network Error: Could not reach the API server.'));
         }
         

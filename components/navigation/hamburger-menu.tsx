@@ -71,7 +71,7 @@ export function HamburgerMenu() {
             <Ionicons
               name={isOpen ? 'close' : 'menu'}
               size={28}
-              color="$gray12"
+              color="#000000"
             />
           </YStack>
         )}

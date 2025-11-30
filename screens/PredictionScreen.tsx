@@ -1,50 +1,165 @@
-import { useRoute, type RouteProp } from '@react-navigation/native';
-import React from 'react';
-import { Text, YStack } from 'tamagui';
+import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useState } from 'react';
+import { ScrollView } from 'react-native';
+import { Text, XStack, YStack } from 'tamagui';
+import { EditableChessBoard } from '../components/chess';
+import { Button } from '../components/ui/button';
+import { Card } from '../components/ui/card';
+import { useCorrectionMutation } from '../hooks/api';
 import type { RootStackParamList } from '../navigation/AppNavigator';
+import { ChessUtils } from '../utils/chess-utils';
 
 type PredictionScreenRouteProp = RouteProp<RootStackParamList, 'Prediction'>;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Prediction'>;
 
 /**
- * Prediction Screen - Placeholder
+ * Prediction Screen
  * Displays predicted chess board and allows editing/correction
  */
 export default function PredictionScreen() {
   const route = useRoute<PredictionScreenRouteProp>();
+  const navigation = useNavigation<NavigationProp>();
   const { predictionData } = route.params;
 
+  console.log('[PredictionScreen] Received prediction data:', JSON.stringify(predictionData, null, 2));
+
+  const [correctedFen, setCorrectedFen] = useState<string | null>(null);
+  const correctionMutation = useCorrectionMutation();
+
+  // Validate prediction data
+  const isEmptyBoard = predictionData.fen ? ChessUtils.isEmptyBoard(predictionData.fen) : true;
+  const pieceCount = predictionData.fen ? ChessUtils.countPieces(predictionData.fen) : 0;
+  const confidenceScore = predictionData.confidence_score || 0;
+  const isLowConfidence = confidenceScore < 0.3;
+  const isPlayablePosition = predictionData.fen ? ChessUtils.isValidPlayablePosition(predictionData.fen) : false;
+  const hasValidPrediction = predictionData.success && predictionData.fen && !isEmptyBoard && pieceCount >= 2;
+
+  const handlePositionChange = (fen: string) => {
+    setCorrectedFen(fen);
+  };
+
+  const handleSubmitCorrection = async () => {
+    if (!correctedFen || !predictionData.prediction_id) {
+      return;
+    }
+
+    try {
+      await correctionMutation.mutateAsync({
+        prediction_id: predictionData.prediction_id,
+        corrected_fen: correctedFen,
+      });
+
+      // Navigate back to Upload screen
+      navigation.navigate('Upload');
+    } catch (error) {
+      console.error('Failed to submit correction:', error);
+    }
+  };
+
+  const handleNewPosition = () => {
+    navigation.navigate('Upload');
+  };
+
   return (
-    <YStack
-      flex={1}
-      backgroundColor="$background"
-      paddingHorizontal="$4"
-      paddingVertical="$6"
-      justifyContent="center"
-      alignItems="center"
-      gap="$4"
-    >
-      <Text fontSize="$7" fontWeight="700" color="$gray12">
-        Prediction Result
-      </Text>
-
-      {predictionData.success ? (
-        <>
-          <Text fontSize="$4" color="$gray10">
-            FEN: {predictionData.fen || 'N/A'}
+    <ScrollView>
+      <YStack
+        flex={1}
+        backgroundColor="$background"
+        paddingHorizontal="$4"
+        paddingVertical="$6"
+        gap="$4"
+      >
+        {/* Header */}
+        <YStack alignItems="center" gap="$2">
+          <Text fontSize="$7" fontWeight="700" color="$gray12">
+            {hasValidPrediction ? 'Position Detected' : 'Detection Failed'}
           </Text>
-          <Text fontSize="$4" color="$gray10">
-            Confidence: {predictionData.confidence_score ? `${(predictionData.confidence_score * 100).toFixed(1)}%` : 'N/A'}
-          </Text>
-        </>
-      ) : (
-        <Text fontSize="$4" color="$red10">
-          {predictionData.message || 'Prediction failed'}
-        </Text>
-      )}
 
-      <Text fontSize="$3" color="$gray9" marginTop="$3">
-        Full UI coming soon...
-      </Text>
-    </YStack>
+          {predictionData.success && confidenceScore > 0 && (
+            <Card variant="filled">
+              <XStack gap="$2" alignItems="center">
+                <Text fontSize="$4" color="$gray11">
+                  Confidence:
+                </Text>
+                <Text fontSize="$6" fontWeight="700" color={isLowConfidence ? '$orange10' : '$blue10'}>
+                  {`${(confidenceScore * 100).toFixed(1)}%`}
+                </Text>
+              </XStack>
+            </Card>
+          )}
+
+          {isLowConfidence && hasValidPrediction && (
+            <Card variant="outlined">
+              <Text fontSize="$3" color="$orange10" textAlign="center">
+                ⚠️ Low confidence prediction - please review carefully
+              </Text>
+            </Card>
+          )}
+
+          {hasValidPrediction && !isPlayablePosition && (
+            <Card variant="outlined">
+              <YStack gap="$2">
+                <Text fontSize="$3" fontWeight="600" color="$orange10" textAlign="center">
+                  ⚠️ Invalid Chess Position
+                </Text>
+                <Text fontSize="$2" color="$gray11" textAlign="center">
+                  This position is missing required pieces (kings). Drag pieces to correct the position.
+                </Text>
+              </YStack>
+            </Card>
+          )}
+        </YStack>
+
+        {/* Chessboard */}
+        {hasValidPrediction ? (
+          <EditableChessBoard
+            initialFen={predictionData.fen}
+            editable={true}
+            skipValidation={true}
+            onPositionChange={handlePositionChange}
+            showCoordinates={true}
+            boardSize={240}
+          />
+        ) : (
+          <Card variant="outlined">
+            <YStack gap="$2" alignItems="center">
+              <Text fontSize="$5" fontWeight="600" color="$red10" textAlign="center">
+                {isEmptyBoard ? 'Empty Board Detected' : 'Detection Failed'}
+              </Text>
+              <Text fontSize="$3" color="$gray11" textAlign="center">
+                {isEmptyBoard
+                  ? 'No chess pieces were detected on the board. Please ensure the image is clear and well-lit.'
+                  : pieceCount < 2
+                  ? `Only ${pieceCount} piece(s) detected. This may not be a valid chess position.`
+                  : predictionData.message || 'Unable to detect chess position. Please try another image.'}
+              </Text>
+            </YStack>
+          </Card>
+        )}
+
+        {/* Action Buttons */}
+        <YStack gap="$3" marginTop="$4">
+          {hasValidPrediction && (
+            <Button
+              variant="primary"
+              size="$5"
+              onPress={handleSubmitCorrection}
+              disabled={!correctedFen || correctionMutation.isPending}
+            >
+              {correctionMutation.isPending ? 'Submitting...' : 'Submit Correction'}
+            </Button>
+          )}
+
+          <Button
+            variant="outline"
+            size="$5"
+            onPress={handleNewPosition}
+          >
+            Analyze New Position
+          </Button>
+        </YStack>
+      </YStack>
+    </ScrollView>
   );
 }
