@@ -2,8 +2,9 @@ import { useNavigation, useRoute, type RouteProp } from '@react-navigation/nativ
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
+import type { BoardEditorUIConfig } from 'react-native-chess-board-editor';
+import { BoardEditor } from 'react-native-chess-board-editor';
 import { Text, XStack, YStack } from 'tamagui';
-import { EditableChessBoard } from '../components/chess';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
 import { useCorrectionMutation } from '../hooks/api';
@@ -37,6 +38,18 @@ export default function PredictionScreen() {
 
   const handlePositionChange = (fen: string) => {
     setCorrectedFen(fen);
+  };
+
+  // UI configuration for BoardEditor
+  const uiConfig: BoardEditorUIConfig = {
+    showFenDisplay: true,
+    fenEditable: false, // Users edit via board interaction, not text
+    showCastlingRights: true,
+    showEnPassantInput: true,
+    showTurnToggler: true,
+    showPieceBank: true, // Now enabled with draggable pieces
+    bankLayout: 'horizontal',
+    flipped: false,
   };
 
   const handleSubmitCorrection = async () => {
@@ -113,13 +126,13 @@ export default function PredictionScreen() {
 
         {/* Chessboard */}
         {hasValidPrediction ? (
-          <EditableChessBoard
-            initialFen={predictionData.fen}
-            editable={true}
-            skipValidation={true}
-            onPositionChange={handlePositionChange}
-            showCoordinates={true}
-            boardSize={240}
+          <BoardEditor
+            initialFen={predictionData.fen ? predictionData.fen : ChessUtils.getStartingFen()  }
+            onFenChange={handlePositionChange}
+            uiConfig={uiConfig}
+            squareSize={45}
+            lightSquareColor="#F0D9B5"
+            darkSquareColor="#B58863"
           />
         ) : (
           <Card variant="outlined">
