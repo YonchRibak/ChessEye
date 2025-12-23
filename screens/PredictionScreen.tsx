@@ -1,6 +1,6 @@
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView } from 'react-native';
 import type { BoardEditorUIConfig } from 'react-native-chess-board-editor';
 import { BoardEditor } from 'react-native-chess-board-editor';
@@ -12,9 +12,18 @@ import { useCorrectionMutation, usePredictPositionMutation } from '../hooks/api'
 import type { RootStackParamList } from '../navigation/AppNavigator';
 import type * as ApiTypes from '../types/api';
 import { ChessUtils } from '../utils/chess-utils';
+import { LichessUtils } from '../utils/lichess-utils';
 
 type PredictionScreenRouteProp = RouteProp<RootStackParamList, 'Prediction'>;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Prediction'>;
+
+/**
+ * Submission state enum for button state transitions
+ * - idle: Ready to submit correction
+ * - success: Correction submitted successfully (shows briefly)
+ * - redirect: Ready to open Lichess editor
+ */
+type SubmissionState = 'idle' | 'success' | 'redirect';
 
 /**
  * Prediction Screen
@@ -32,6 +41,10 @@ export default function PredictionScreen() {
   const [predictionData, setPredictionData] = useState<ApiTypes.PredictionResponse>(initialPredictionData);
   const [correctedFen, setCorrectedFen] = useState<string | null>(null);
 
+  // Submission state management for button transitions
+  const [submissionState, setSubmissionState] = useState<SubmissionState>('idle');
+  const [successTimer, setSuccessTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+
   const correctionMutation = useCorrectionMutation();
   const predictMutation = usePredictPositionMutation();
 
@@ -42,6 +55,15 @@ export default function PredictionScreen() {
   const isLowConfidence = confidenceScore < 0.3;
   const isPlayablePosition = predictionData.fen ? ChessUtils.isValidPlayablePosition(predictionData.fen) : false;
   const hasValidPrediction = predictionData.success && predictionData.fen && !isEmptyBoard && pieceCount >= 2;
+
+  // Cleanup timer on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (successTimer) {
+        clearTimeout(successTimer);
+      }
+    };
+  }, [successTimer]);
 
   const handlePositionChange = (fen: string) => {
     setCorrectedFen(fen);
@@ -100,10 +122,37 @@ export default function PredictionScreen() {
         corrected_fen: correctedFen,
       });
 
-      // Navigate back to Upload screen
-      navigation.navigate('Upload');
+      // Clear any existing timer to prevent memory leaks
+      if (successTimer) {
+        clearTimeout(successTimer);
+      }
+
+      // Show success message
+      setSubmissionState('success');
+
+      // After 1.5s, transform to Lichess button
+      const timer = setTimeout(() => {
+        setSubmissionState('redirect');
+      }, 1500);
+
+      setSuccessTimer(timer);
     } catch (error) {
       console.error('Failed to submit correction:', error);
+      // Reset to idle state on error to allow retry
+      setSubmissionState('idle');
+    }
+  };
+
+  const handleOpenLichess = async () => {
+    if (!correctedFen) {
+      return;
+    }
+
+    try {
+      await LichessUtils.openLichessEditor(correctedFen);
+      // Stay on screen (per user preference)
+    } catch (error) {
+      console.error('Failed to open Lichess editor:', error);
     }
   };
 
@@ -219,16 +268,63 @@ export default function PredictionScreen() {
 
         {/* Action Buttons */}
         <YStack gap="$3" marginTop="$4">
-          {hasValidPrediction && (
-            <Button
-              variant="primary"
-              size="$5"
-              onPress={handleSubmitCorrection}
-              disabled={!correctedFen || correctionMutation.isPending}
-            >
-              {correctionMutation.isPending ? 'Submitting...' : 'Submit Correction'}
-            </Button>
-          )}
+          {hasValidPrediction && (() => {
+            // Loading state - show spinner + text
+            if (correctionMutation.isPending) {
+              return (
+                <Button
+                  variant="primary"
+                  size="$5"
+                  disabled={true}
+                >
+                  <XStack gap="$2" alignItems="center">
+                    <ActivityIndicator size="small" color="white" />
+                    <Text color="white">Submitting...</Text>
+                  </XStack>
+                </Button>
+              );
+            }
+
+            // Success state - show checkmark message (displays for 1.5s)
+            if (submissionState === 'success') {
+              return (
+                <Button
+                  variant="primary"
+                  size="$5"
+                  disabled={true}
+                >
+                  ✓ Correction Submitted!
+                </Button>
+              );
+            }
+
+            // Redirect state - Lichess button (dark purple)
+            if (submissionState === 'redirect') {
+              return (
+                <Button
+                  variant="primary"
+                  size="$5"
+                  backgroundColor="$purple10"
+                  onPress={handleOpenLichess}
+                  disabled={false}
+                >
+                  Lichess Board Editor
+                </Button>
+              );
+            }
+
+            // Idle state - default submit button
+            return (
+              <Button
+                variant="primary"
+                size="$5"
+                onPress={handleSubmitCorrection}
+                disabled={!correctedFen}
+              >
+                Submit Correction
+              </Button>
+            );
+          })()}
 
           <Button
             variant="outline"
