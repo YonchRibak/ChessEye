@@ -26,10 +26,10 @@ const AppNavigator = () => {
                 component={UploadScreen} 
                 options={{ title: 'Capture Board' }} 
             />
-            <Stack.Screen 
-                name="Prediction" 
-                component={PredictionScreen} 
-                options={{ title: 'Verify & Edit' }} 
+            <Stack.Screen
+                name="Prediction"
+                component={PredictionScreen}
+                options={{ headerShown: false }}
             />
             <Stack.Screen 
                 name="AboutProject" 

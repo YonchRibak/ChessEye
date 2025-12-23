@@ -40,16 +40,29 @@ export default function PredictionScreen() {
     setCorrectedFen(fen);
   };
 
-  // UI configuration for BoardEditor
+  // UI configuration for BoardEditor (v2.0 API)
   const uiConfig: BoardEditorUIConfig = {
-    showFenDisplay: true,
-    fenEditable: false, // Users edit via board interaction, not text
-    showCastlingRights: true,
-    showEnPassantInput: true,
-    showTurnToggler: true,
-    showPieceBank: true, // Now enabled with draggable pieces
-    bankLayout: 'horizontal',
     flipped: false,
+    pieceBank: {
+      show: true,
+      layout: 'horizontal',
+      pieceSize: 36,
+    },
+    editableBoard: {
+      coordinateLabels: {
+        show: true,
+      },
+    },
+    fenDisplay: {
+      show: true,
+      editable: false, // Users edit via board interaction, not text
+    },
+    editorToolsPanel: {
+      show: true,
+      showTurnToggler: true,
+      showCastlingRights: true,
+      showEnPassantInput: true,
+    },
   };
 
   const handleSubmitCorrection = async () => {
@@ -83,56 +96,16 @@ export default function PredictionScreen() {
         paddingVertical="$6"
         gap="$4"
       >
-        {/* Header */}
-        <YStack alignItems="center" gap="$2">
-          <Text fontSize="$7" fontWeight="700" color="$gray12">
-            {hasValidPrediction ? 'Position Detected' : 'Detection Failed'}
-          </Text>
-
-          {predictionData.success && confidenceScore > 0 && (
-            <Card variant="filled">
-              <XStack gap="$2" alignItems="center">
-                <Text fontSize="$4" color="$gray11">
-                  Confidence:
-                </Text>
-                <Text fontSize="$6" fontWeight="700" color={isLowConfidence ? '$orange10' : '$blue10'}>
-                  {`${(confidenceScore * 100).toFixed(1)}%`}
-                </Text>
-              </XStack>
-            </Card>
-          )}
-
-          {isLowConfidence && hasValidPrediction && (
-            <Card variant="outlined">
-              <Text fontSize="$3" color="$orange10" textAlign="center">
-                ⚠️ Low confidence prediction - please review carefully
-              </Text>
-            </Card>
-          )}
-
-          {hasValidPrediction && !isPlayablePosition && (
-            <Card variant="outlined">
-              <YStack gap="$2">
-                <Text fontSize="$3" fontWeight="600" color="$orange10" textAlign="center">
-                  ⚠️ Invalid Chess Position
-                </Text>
-                <Text fontSize="$2" color="$gray11" textAlign="center">
-                  This position is missing required pieces (kings). Drag pieces to correct the position.
-                </Text>
-              </YStack>
-            </Card>
-          )}
-        </YStack>
-
         {/* Chessboard */}
         {hasValidPrediction ? (
           <BoardEditor
             initialFen={predictionData.fen ? predictionData.fen : ChessUtils.getStartingFen()  }
             onFenChange={handlePositionChange}
             uiConfig={uiConfig}
-            squareSize={45}
+            squareSize={36}
             lightSquareColor="#F0D9B5"
             darkSquareColor="#B58863"
+            containerStyle={{ alignSelf: 'center', maxWidth: '100%' }}
           />
         ) : (
           <Card variant="outlined">
@@ -148,6 +121,45 @@ export default function PredictionScreen() {
                   : predictionData.message || 'Unable to detect chess position. Please try another image.'}
               </Text>
             </YStack>
+          </Card>
+        )}
+
+        {/* Confidence and Warnings Row */}
+        {hasValidPrediction && (
+          <XStack gap="$3" flexWrap="wrap">
+            {predictionData.success && confidenceScore > 0 && (
+              <Card variant="filled" flex={1} minWidth={150}>
+                <XStack gap="$2" alignItems="center">
+                  <Text fontSize="$4" color="$gray11">
+                    Confidence:
+                  </Text>
+                  <Text fontSize="$6" fontWeight="700" color={isLowConfidence ? '$orange10' : '$blue10'}>
+                    {`${(confidenceScore * 100).toFixed(1)}%`}
+                  </Text>
+                </XStack>
+              </Card>
+            )}
+
+            {!isPlayablePosition && (
+              <Card variant="outlined" flex={1} minWidth={150}>
+                <YStack gap="$2">
+                  <Text fontSize="$3" fontWeight="600" color="$orange10" textAlign="center">
+                    ⚠️ Invalid Position
+                  </Text>
+                  <Text fontSize="$2" color="$gray11" textAlign="center">
+                    Missing required pieces (kings)
+                  </Text>
+                </YStack>
+              </Card>
+            )}
+          </XStack>
+        )}
+
+        {isLowConfidence && hasValidPrediction && (
+          <Card variant="outlined">
+            <Text fontSize="$3" color="$orange10" textAlign="center">
+              ⚠️ Low confidence prediction - please review carefully
+            </Text>
           </Card>
         )}
 
