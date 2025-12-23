@@ -1,14 +1,16 @@
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { ScrollView } from 'react-native';
+import { ActivityIndicator, ScrollView } from 'react-native';
 import type { BoardEditorUIConfig } from 'react-native-chess-board-editor';
 import { BoardEditor } from 'react-native-chess-board-editor';
 import { Text, XStack, YStack } from 'tamagui';
+import { ServiceToggler } from '../components/ServiceToggler';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
-import { useCorrectionMutation } from '../hooks/api';
+import { useCorrectionMutation, usePredictPositionMutation } from '../hooks/api';
 import type { RootStackParamList } from '../navigation/AppNavigator';
+import type * as ApiTypes from '../types/api';
 import { ChessUtils } from '../utils/chess-utils';
 
 type PredictionScreenRouteProp = RouteProp<RootStackParamList, 'Prediction'>;
@@ -21,12 +23,17 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Prediction'
 export default function PredictionScreen() {
   const route = useRoute<PredictionScreenRouteProp>();
   const navigation = useNavigation<NavigationProp>();
-  const { predictionData } = route.params;
+  const { predictionData: initialPredictionData, imageUri, fileName } = route.params;
 
-  console.log('[PredictionScreen] Received prediction data:', JSON.stringify(predictionData, null, 2));
+  console.log('[PredictionScreen] Received prediction data:', JSON.stringify(initialPredictionData, null, 2));
+  console.log('[PredictionScreen] Image URI:', imageUri);
 
+  // Track the current prediction data (can be updated when switching services)
+  const [predictionData, setPredictionData] = useState<ApiTypes.PredictionResponse>(initialPredictionData);
   const [correctedFen, setCorrectedFen] = useState<string | null>(null);
+
   const correctionMutation = useCorrectionMutation();
+  const predictMutation = usePredictPositionMutation();
 
   // Validate prediction data
   const isEmptyBoard = predictionData.fen ? ChessUtils.isEmptyBoard(predictionData.fen) : true;
@@ -38,6 +45,23 @@ export default function PredictionScreen() {
 
   const handlePositionChange = (fen: string) => {
     setCorrectedFen(fen);
+  };
+
+  // Handler for when service is switched - triggers fresh prediction
+  const handleServiceSwitch = async () => {
+    console.log('[PredictionScreen] Service switched, getting fresh prediction...');
+    try {
+      const newPrediction = await predictMutation.mutateAsync({
+        imageUri,
+        fileName,
+      });
+
+      console.log('[PredictionScreen] Fresh prediction received:', newPrediction);
+      setPredictionData(newPrediction);
+      setCorrectedFen(null); // Reset correction
+    } catch (error) {
+      console.error('[PredictionScreen] Failed to get fresh prediction:', error);
+    }
   };
 
   // UI configuration for BoardEditor (v2.0 API)
@@ -96,9 +120,39 @@ export default function PredictionScreen() {
         paddingVertical="$6"
         gap="$4"
       >
+        {/* Service Toggler */}
+        <ServiceToggler onSwitchSuccess={handleServiceSwitch} />
+
+        {/* Loading indicator for re-prediction */}
+        {predictMutation.isPending && (
+          <Card variant="filled">
+            <XStack gap="$3" alignItems="center" justifyContent="center">
+              <ActivityIndicator size="small" />
+              <Text fontSize="$4" color="$gray11">
+                Getting prediction from new service...
+              </Text>
+            </XStack>
+          </Card>
+        )}
+
+        {/* Error indicator for failed re-prediction */}
+        {predictMutation.isError && (
+          <Card variant="outlined">
+            <YStack gap="$2" alignItems="center">
+              <Text fontSize="$4" fontWeight="600" color="$red10">
+                Failed to get new prediction
+              </Text>
+              <Text fontSize="$3" color="$gray11" textAlign="center">
+                {predictMutation.error instanceof Error ? predictMutation.error.message : 'Unknown error occurred'}
+              </Text>
+            </YStack>
+          </Card>
+        )}
+
         {/* Chessboard */}
         {hasValidPrediction ? (
           <BoardEditor
+            key={predictionData.prediction_id || 'board'} // Force re-mount on new prediction
             initialFen={predictionData.fen ? predictionData.fen : ChessUtils.getStartingFen()  }
             onFenChange={handlePositionChange}
             uiConfig={uiConfig}

@@ -8,9 +8,11 @@ import * as ApiTypes from '../types/api';
 
 
 export type RootStackParamList = {
-    Upload: undefined; 
+    Upload: undefined;
     Prediction: {
         predictionData: ApiTypes.PredictionResponse; // Pass the result from the API call
+        imageUri: string; // Original image URI for re-prediction
+        fileName: string; // Original file name
     };
     AboutProject: undefined;
     AboutAuthor: undefined;

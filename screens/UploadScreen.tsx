@@ -47,8 +47,12 @@ export default function UploadScreen() {
     try {
       const result = await predictMutation.mutateAsync({ imageUri: uri, fileName });
 
-      // Navigate to Prediction screen with results
-      navigation.navigate('Prediction', { predictionData: result });
+      // Navigate to Prediction screen with results and original image info for re-prediction
+      navigation.navigate('Prediction', {
+        predictionData: result,
+        imageUri: uri,
+        fileName: fileName,
+      });
     } catch (error) {
       Alert.alert(
         'Prediction Failed',
