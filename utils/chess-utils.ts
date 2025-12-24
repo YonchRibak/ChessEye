@@ -133,53 +133,54 @@ export class ChessUtils {
    * @returns Error message string if invalid, null if valid
    */
   public static getPositionValidationError = (fen: string): string | null => {
+    if (!fen || fen.trim() === '') {
+      return 'No position available';
+    }
+
+    // Parse FEN manually to count kings (chess.js won't parse invalid positions)
+    const position = fen.split(' ')[0];
+
+    // Count kings by parsing the FEN position string directly
+    let whiteKingCount = 0;
+    let blackKingCount = 0;
+
+    for (const char of position) {
+      if (char === 'K') {
+        whiteKingCount++;
+      } else if (char === 'k') {
+        blackKingCount++;
+      }
+    }
+
+    // Check for missing kings
+    if (whiteKingCount === 0 && blackKingCount === 0) {
+      return 'Both kings missing';
+    }
+    if (whiteKingCount === 0) {
+      return 'White king missing';
+    }
+    if (blackKingCount === 0) {
+      return 'Black king missing';
+    }
+
+    // Check for too many kings
+    if (whiteKingCount > 1 && blackKingCount > 1) {
+      return 'Too many kings';
+    }
+    if (whiteKingCount > 1) {
+      return 'Too many white kings';
+    }
+    if (blackKingCount > 1) {
+      return 'Too many black kings';
+    }
+
+    // Kings are correct, now validate with chess.js for other issues
     try {
-      const chess = new Chess(fen);
-      const board = chess.board();
-
-      // Count kings
-      let whiteKingCount = 0;
-      let blackKingCount = 0;
-
-      for (const row of board) {
-        for (const square of row) {
-          if (square && square.type === 'k') {
-            if (square.color === 'w') {
-              whiteKingCount++;
-            } else if (square.color === 'b') {
-              blackKingCount++;
-            }
-          }
-        }
-      }
-
-      // Check for missing kings
-      if (whiteKingCount === 0 && blackKingCount === 0) {
-        return 'Both kings missing';
-      }
-      if (whiteKingCount === 0) {
-        return 'White king missing';
-      }
-      if (blackKingCount === 0) {
-        return 'Black king missing';
-      }
-
-      // Check for too many kings
-      if (whiteKingCount > 1 && blackKingCount > 1) {
-        return 'Too many kings';
-      }
-      if (whiteKingCount > 1) {
-        return 'Too many white kings';
-      }
-      if (blackKingCount > 1) {
-        return 'Too many black kings';
-      }
-
-      // Position is valid
-      return null;
+      new Chess(fen);
+      return null; // Valid position
     } catch (error) {
-      // Chess.js threw an error (invalid FEN structure, illegal position, etc.)
-      return 'Invalid position structure';
+      // Chess.js found other issues (illegal pawn placement, king in check, etc.)
+      return 'Invalid position';
     }
   };
 }
