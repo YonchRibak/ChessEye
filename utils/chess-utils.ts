@@ -126,4 +126,60 @@ export class ChessUtils {
 
     return pieceCount;
   };
+
+  /**
+   * Get detailed validation error for a chess position
+   * @param fen - FEN notation string
+   * @returns Error message string if invalid, null if valid
+   */
+  public static getPositionValidationError = (fen: string): string | null => {
+    try {
+      const chess = new Chess(fen);
+      const board = chess.board();
+
+      // Count kings
+      let whiteKingCount = 0;
+      let blackKingCount = 0;
+
+      for (const row of board) {
+        for (const square of row) {
+          if (square && square.type === 'k') {
+            if (square.color === 'w') {
+              whiteKingCount++;
+            } else if (square.color === 'b') {
+              blackKingCount++;
+            }
+          }
+        }
+      }
+
+      // Check for missing kings
+      if (whiteKingCount === 0 && blackKingCount === 0) {
+        return 'Both kings missing';
+      }
+      if (whiteKingCount === 0) {
+        return 'White king missing';
+      }
+      if (blackKingCount === 0) {
+        return 'Black king missing';
+      }
+
+      // Check for too many kings
+      if (whiteKingCount > 1 && blackKingCount > 1) {
+        return 'Too many kings';
+      }
+      if (whiteKingCount > 1) {
+        return 'Too many white kings';
+      }
+      if (blackKingCount > 1) {
+        return 'Too many black kings';
+      }
+
+      // Position is valid
+      return null;
+    } catch (error) {
+      // Chess.js threw an error (invalid FEN structure, illegal position, etc.)
+      return 'Invalid position structure';
+    }
+  };
 }

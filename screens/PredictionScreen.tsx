@@ -48,12 +48,13 @@ export default function PredictionScreen() {
   const correctionMutation = useCorrectionMutation();
   const predictMutation = usePredictPositionMutation();
 
-  // Validate prediction data
+  // Validate prediction data - use corrected FEN if available, otherwise prediction FEN
+  const currentFen = correctedFen || predictionData.fen;
   const isEmptyBoard = predictionData.fen ? ChessUtils.isEmptyBoard(predictionData.fen) : true;
   const pieceCount = predictionData.fen ? ChessUtils.countPieces(predictionData.fen) : 0;
   const confidenceScore = predictionData.confidence_score || 0;
   const isLowConfidence = confidenceScore < 0.3;
-  const isPlayablePosition = predictionData.fen ? ChessUtils.isValidPlayablePosition(predictionData.fen) : false;
+  const positionValidationError = currentFen ? ChessUtils.getPositionValidationError(currentFen) : 'No position available';
   const hasValidPrediction = predictionData.success && predictionData.fen && !isEmptyBoard && pieceCount >= 2;
 
   // Cleanup timer on unmount to prevent memory leaks
@@ -243,14 +244,14 @@ export default function PredictionScreen() {
               </Card>
             )}
 
-            {!isPlayablePosition && (
+            {positionValidationError && (
               <Card variant="outlined" flex={1} minWidth={150}>
                 <YStack gap="$2">
                   <Text fontSize="$3" fontWeight="600" color="$orange10" textAlign="center">
                     ⚠️ Invalid Position
                   </Text>
                   <Text fontSize="$2" color="$gray11" textAlign="center">
-                    Missing required pieces (kings)
+                    {positionValidationError}
                   </Text>
                 </YStack>
               </Card>
