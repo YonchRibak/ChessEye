@@ -109,25 +109,6 @@ export class ChessUtils {
   };
 
   /**
-   * Count total pieces on the board
-   * @param fen - FEN notation string
-   * @returns Number of pieces on the board
-   */
-  public static countPieces = (fen: string): number => {
-    if (!fen || fen.trim() === '') {
-      return 0;
-    }
-
-    const position = fen.split(' ')[0];
-
-    // Count all letters (pieces) in the position string
-    // Pieces are represented by letters: K, Q, R, B, N, P (white) and k, q, r, b, n, p (black)
-    const pieceCount = (position.match(/[a-zA-Z]/g) || []).length;
-
-    return pieceCount;
-  };
-
-  /**
    * Get detailed validation error for a chess position
    * @param fen - FEN notation string
    * @returns Error message string if invalid, null if valid

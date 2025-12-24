@@ -8,11 +8,9 @@ import { ChessUtils } from './chess-utils';
 export interface PositionValidationResult {
   currentFen: string | null;
   isEmptyBoard: boolean;
-  pieceCount: number;
   confidenceScore: number;
   isLowConfidence: boolean;
   positionValidationError: string | null;
-  hasValidPrediction: boolean | string | null;
 }
 
 /**
@@ -33,26 +31,18 @@ export class PredictionUtils {
   ): PositionValidationResult {
     const currentFen = correctedFen || predictionData.fen;
     const isEmptyBoard = predictionData.fen ? ChessUtils.isEmptyBoard(predictionData.fen) : true;
-    const pieceCount = predictionData.fen ? ChessUtils.countPieces(predictionData.fen) : 0;
     const confidenceScore = predictionData.confidence_score || 0;
     const isLowConfidence = confidenceScore < PREDICTION_CONSTANTS.LOW_CONFIDENCE_THRESHOLD;
     const positionValidationError = currentFen
       ? ChessUtils.getPositionValidationError(currentFen)
       : 'No position available';
-    const hasValidPrediction =
-      predictionData.success &&
-      predictionData.fen &&
-      !isEmptyBoard &&
-      pieceCount >= PREDICTION_CONSTANTS.MIN_PIECE_COUNT;
 
     return {
       currentFen,
       isEmptyBoard,
-      pieceCount,
       confidenceScore,
       isLowConfidence,
       positionValidationError,
-      hasValidPrediction,
     };
   }
 }

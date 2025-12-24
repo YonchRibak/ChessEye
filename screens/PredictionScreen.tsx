@@ -54,11 +54,9 @@ export default function PredictionScreen() {
   // Validate prediction data and calculate UI states
   const {
     isEmptyBoard,
-    pieceCount,
     confidenceScore,
     isLowConfidence,
     positionValidationError,
-    hasValidPrediction,
   } = PredictionUtils.validatePosition(predictionData, correctedFen);
 
   const handlePositionChange = (fen: string) => {
@@ -106,7 +104,7 @@ export default function PredictionScreen() {
         />
 
         {/* Chessboard */}
-        {hasValidPrediction ? (
+        {!isEmptyBoard && predictionData.success ? (
           <BoardEditor
             key={predictionData.prediction_id || 'board'} // Force re-mount on new prediction
             initialFen={predictionData.fen ? predictionData.fen : ChessUtils.getStartingFen()}
@@ -120,22 +118,22 @@ export default function PredictionScreen() {
         ) : (
           <EmptyBoardMessage
             isEmptyBoard={isEmptyBoard}
-            pieceCount={pieceCount}
             message={predictionData.message}
           />
         )}
 
         {/* Confidence and validation warnings */}
-        <PositionValidationCard
-          confidenceScore={confidenceScore}
-          isLowConfidence={isLowConfidence}
-          positionValidationError={positionValidationError}
-          hasValidPrediction={hasValidPrediction}
-        />
+        {!isEmptyBoard && predictionData.success && (
+          <PositionValidationCard
+            confidenceScore={confidenceScore}
+            isLowConfidence={isLowConfidence}
+            positionValidationError={positionValidationError}
+          />
+        )}
 
         {/* Action Buttons */}
         <YStack gap="$3" marginTop="$4">
-          {hasValidPrediction && (
+          {!isEmptyBoard && predictionData.success && (
             <SubmissionButton
               submissionState={submissionState}
               isLoading={correctionMutation.isPending}

@@ -7,7 +7,6 @@ interface PositionValidationCardProps {
   confidenceScore: number;
   isLowConfidence: boolean;
   positionValidationError: string | null;
-  hasValidPrediction: boolean | string | null;
 }
 
 /**
@@ -18,12 +17,7 @@ export function PositionValidationCard({
   confidenceScore,
   isLowConfidence,
   positionValidationError,
-  hasValidPrediction,
 }: PositionValidationCardProps) {
-  if (!hasValidPrediction) {
-    return null;
-  }
-
   const { CONFIDENCE_LABEL, INVALID_POSITION_TITLE, LOW_CONFIDENCE_WARNING, MIN_CARD_WIDTH } =
     PREDICTION_COMPONENT_CONSTANTS.VALIDATION;
 

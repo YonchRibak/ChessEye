@@ -6,7 +6,6 @@
 export const PREDICTION_CONSTANTS = {
   // Thresholds
   LOW_CONFIDENCE_THRESHOLD: 0.3,
-  MIN_PIECE_COUNT: 2,
 
   // Timing (in milliseconds)
   SUCCESS_MESSAGE_DURATION: 1500,

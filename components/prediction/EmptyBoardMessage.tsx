@@ -5,7 +5,6 @@ import { Card } from '../ui/card';
 
 interface EmptyBoardMessageProps {
   isEmptyBoard: boolean;
-  pieceCount: number;
   message?: string | null;
 }
 
@@ -13,15 +12,13 @@ interface EmptyBoardMessageProps {
  * Displays error message when prediction fails or board is empty
  * Shows different messages based on detection failure type
  */
-export function EmptyBoardMessage({ isEmptyBoard, pieceCount, message }: EmptyBoardMessageProps) {
+export function EmptyBoardMessage({ isEmptyBoard, message }: EmptyBoardMessageProps) {
   const title = isEmptyBoard
     ? PREDICTION_COMPONENT_CONSTANTS.EMPTY_BOARD.TITLE
     : PREDICTION_COMPONENT_CONSTANTS.DETECTION_FAILED.TITLE;
 
   const description = isEmptyBoard
     ? PREDICTION_COMPONENT_CONSTANTS.EMPTY_BOARD.DESCRIPTION
-    : pieceCount < 2
-    ? `Only ${pieceCount} piece(s) detected. This may not be a valid chess position.`
     : message || PREDICTION_COMPONENT_CONSTANTS.DETECTION_FAILED.FALLBACK_MESSAGE;
 
   return (
