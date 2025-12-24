@@ -1,7 +1,7 @@
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, ScrollView } from 'react-native';
 import type { BoardEditorUIConfig } from 'react-native-chess-board-editor';
 import { BoardEditor } from 'react-native-chess-board-editor';
 import { Text, XStack, YStack } from 'tamagui';
@@ -45,6 +45,10 @@ export default function PredictionScreen() {
   const [submissionState, setSubmissionState] = useState<SubmissionState>('idle');
   const [successTimer, setSuccessTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
+  // Animation values for Lichess button transition
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const opacityAnim = useRef(new Animated.Value(1)).current;
+
   const correctionMutation = useCorrectionMutation();
   const predictMutation = usePredictPositionMutation();
 
@@ -65,6 +69,30 @@ export default function PredictionScreen() {
       }
     };
   }, [successTimer]);
+
+  // Animate button when transitioning to Lichess redirect state
+  useEffect(() => {
+    if (submissionState === 'redirect') {
+      // Reset to starting values
+      scaleAnim.setValue(0.95);
+      opacityAnim.setValue(0.7);
+
+      // Animate with spring effect for scale and smooth fade for opacity
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          friction: 4,
+          tension: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [submissionState, scaleAnim, opacityAnim]);
 
   const handlePositionChange = (fen: string) => {
     setCorrectedFen(fen);
@@ -299,18 +327,26 @@ export default function PredictionScreen() {
               );
             }
 
-            // Redirect state - Lichess button (dark purple)
+            // Redirect state - Lichess button (dark purple) with animation
             if (submissionState === 'redirect') {
               return (
-                <Button
-                  variant="primary"
-                  size="$5"
-                  backgroundColor="$purple10"
-                  onPress={handleOpenLichess}
-                  disabled={false}
+                <Animated.View
+                  style={{
+                    transform: [{ scale: scaleAnim }],
+                    opacity: opacityAnim,
+                  }}
                 >
-                  Lichess Board Editor
-                </Button>
+                  <Button
+                    variant="primary"
+                    size="$5"
+                    backgroundColor="$purple10"
+                    borderColor="$purple10"
+                    onPress={handleOpenLichess}
+                    disabled={false}
+                  >
+                    Lichess Board Editor
+                  </Button>
+                </Animated.View>
               );
             }
 
