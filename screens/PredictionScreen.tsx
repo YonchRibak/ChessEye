@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 import { BoardEditor } from 'react-native-chess-board-editor';
 import { YStack } from 'tamagui';
+import { DetectionFailedMessage } from '../components/prediction/DetectionFailedMessage';
 import { EmptyBoardMessage } from '../components/prediction/EmptyBoardMessage';
 import { PositionValidationCard } from '../components/prediction/PositionValidationCard';
 import { PredictionStatusIndicator } from '../components/prediction/PredictionStatusIndicator';
@@ -104,22 +105,23 @@ export default function PredictionScreen() {
         />
 
         {/* Chessboard */}
-        {!isEmptyBoard && predictionData.success ? (
-          <BoardEditor
-            key={predictionData.prediction_id || 'board'} // Force re-mount on new prediction
-            initialFen={predictionData.fen ? predictionData.fen : ChessUtils.getStartingFen()}
-            onFenChange={handlePositionChange}
-            uiConfig={DEFAULT_BOARD_EDITOR_CONFIG}
-            squareSize={PREDICTION_CONSTANTS.BOARD_CONFIG.squareSize}
-            lightSquareColor={PREDICTION_CONSTANTS.BOARD_CONFIG.lightSquareColor}
-            darkSquareColor={PREDICTION_CONSTANTS.BOARD_CONFIG.darkSquareColor}
-            containerStyle={{ alignSelf: 'center', maxWidth: '100%' }}
-          />
+        {predictionData.success ? (
+          isEmptyBoard ? (
+            <EmptyBoardMessage />
+          ) : (
+            <BoardEditor
+              key={predictionData.prediction_id || 'board'} // Force re-mount on new prediction
+              initialFen={predictionData.fen ? predictionData.fen : ChessUtils.getStartingFen()}
+              onFenChange={handlePositionChange}
+              uiConfig={DEFAULT_BOARD_EDITOR_CONFIG}
+              squareSize={PREDICTION_CONSTANTS.BOARD_CONFIG.squareSize}
+              lightSquareColor={PREDICTION_CONSTANTS.BOARD_CONFIG.lightSquareColor}
+              darkSquareColor={PREDICTION_CONSTANTS.BOARD_CONFIG.darkSquareColor}
+              containerStyle={{ alignSelf: 'center', maxWidth: '100%' }}
+            />
+          )
         ) : (
-          <EmptyBoardMessage
-            isEmptyBoard={isEmptyBoard}
-            message={predictionData.message}
-          />
+          <DetectionFailedMessage message={predictionData.message} />
         )}
 
         {/* Confidence and validation warnings */}

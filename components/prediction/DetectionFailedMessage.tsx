@@ -3,12 +3,16 @@ import { Text, YStack } from 'tamagui';
 import { PREDICTION_COMPONENT_CONSTANTS } from '../../constants/prediction-components';
 import { Card } from '../ui/card';
 
+interface DetectionFailedMessageProps {
+  message?: string | null;
+}
+
 /**
- * Displays message when empty board is detected
- * Only renders when board is empty but API call succeeded
+ * Displays error message when API call fails or prediction is unsuccessful
+ * Only renders when predictionData.success is false
  */
-export function EmptyBoardMessage() {
-  const { TITLE, DESCRIPTION } = PREDICTION_COMPONENT_CONSTANTS.EMPTY_BOARD;
+export function DetectionFailedMessage({ message }: DetectionFailedMessageProps) {
+  const { TITLE, FALLBACK_MESSAGE } = PREDICTION_COMPONENT_CONSTANTS.DETECTION_FAILED;
 
   return (
     <Card variant="outlined">
@@ -17,7 +21,7 @@ export function EmptyBoardMessage() {
           {TITLE}
         </Text>
         <Text fontSize="$3" color="$gray11" textAlign="center">
-          {DESCRIPTION}
+          {message || FALLBACK_MESSAGE}
         </Text>
       </YStack>
     </Card>
