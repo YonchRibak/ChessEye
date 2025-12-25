@@ -70,6 +70,7 @@ export const ABOUT_END_TO_END_CONTENT: AboutSectionContent = {
     'Treats recognition as a dense classification problem',
     'Predicts all 64 squares simultaneously',
     'Leverages global image context to identify piece types and positions',
+    'Collects user corrections to continuously improve model performance - retraining occurs every 1,000 corrections',
   ],
   externalLink: 'https://www.kaggle.com/code/jonathanribak/chess-board-recognition-end-2-end-chessred-dataset',
   linkText: 'View Kaggle Notebook',
