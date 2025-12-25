@@ -34,57 +34,20 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
     return (
-        <Stack.Navigator initialRouteName="Upload">
-            <Stack.Screen
-                name="Upload"
-                component={UploadScreen}
-                options={{ title: 'Capture Board' }}
-            />
-            <Stack.Screen
-                name="Prediction"
-                component={PredictionScreen}
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="AboutProject"
-                component={AboutProjectScreen}
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="AboutAuthor"
-                component={AboutAuthorScreen}
-                options={{ title: 'About The Author' }}
-            />
-            <Stack.Screen
-                name="AboutML"
-                component={AboutMLScreen}
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="AboutEndToEnd"
-                component={AboutEndToEndScreen}
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="AboutPipeline"
-                component={AboutPipelineScreen}
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="AboutFrontend"
-                component={AboutFrontendScreen}
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="AboutBoardEditor"
-                component={AboutBoardEditorScreen}
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="AboutBackend"
-                component={AboutBackendScreen}
-                options={{ headerShown: false }}
-            />
+        <Stack.Navigator
+            initialRouteName="Upload"
+            screenOptions={{ headerShown: false }}
+        >
+            <Stack.Screen name="Upload" component={UploadScreen} />
+            <Stack.Screen name="Prediction" component={PredictionScreen} />
+            <Stack.Screen name="AboutProject" component={AboutProjectScreen} />
+            <Stack.Screen name="AboutAuthor" component={AboutAuthorScreen} />
+            <Stack.Screen name="AboutML" component={AboutMLScreen} />
+            <Stack.Screen name="AboutEndToEnd" component={AboutEndToEndScreen} />
+            <Stack.Screen name="AboutPipeline" component={AboutPipelineScreen} />
+            <Stack.Screen name="AboutFrontend" component={AboutFrontendScreen} />
+            <Stack.Screen name="AboutBoardEditor" component={AboutBoardEditorScreen} />
+            <Stack.Screen name="AboutBackend" component={AboutBackendScreen} />
         </Stack.Navigator>
     );
 };
