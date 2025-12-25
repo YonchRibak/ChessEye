@@ -48,7 +48,7 @@ export default function UploadScreen() {
       </YStack>
 
       {/* Processing Indicator */}
-      <ProcessingIndicator isVisible={isProcessing} />
+      {isProcessing && <ProcessingIndicator />}
     </YStack>
   );
 }
