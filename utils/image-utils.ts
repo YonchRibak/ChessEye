@@ -1,5 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
-import { Alert } from 'react-native';
+import { TOAST_CONSTANTS } from '../constants/toast';
+import { ToastUtils } from './toast-utils';
 
 export interface ImageResult {
   uri: string;
@@ -19,10 +20,10 @@ export class ImageUtils {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== 'granted') {
-      Alert.alert(
+      ToastUtils.warning(
         'Permission Required',
         'Please grant access to your photo library to select images.',
-        [{ text: 'OK' }]
+        TOAST_CONSTANTS.DURATION.MEDIUM
       );
       return false;
     }
@@ -38,10 +39,10 @@ export class ImageUtils {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
 
     if (status !== 'granted') {
-      Alert.alert(
+      ToastUtils.warning(
         'Permission Required',
         'Please grant camera access to take photos.',
-        [{ text: 'OK' }]
+        TOAST_CONSTANTS.DURATION.MEDIUM
       );
       return false;
     }

@@ -1,7 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Alert, Linking, Pressable } from 'react-native';
+import { Linking, Pressable } from 'react-native';
 import { Text, XStack } from 'tamagui';
+import { TOAST_CONSTANTS } from '../../constants/toast';
+import { ToastUtils } from '../../utils/toast-utils';
 
 interface ExternalLinkButtonProps {
   /** External URL to open */
@@ -42,10 +44,10 @@ export function ExternalLinkButton({
       if (canOpen) {
         await Linking.openURL(url);
       } else {
-        Alert.alert('Error', 'Cannot open this URL');
+        ToastUtils.error('Error', 'Cannot open this URL', TOAST_CONSTANTS.DURATION.SHORT);
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to open link');
+      ToastUtils.error('Error', 'Failed to open link', TOAST_CONSTANTS.DURATION.SHORT);
       console.error('Error opening URL:', error);
     }
   };

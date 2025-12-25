@@ -4,7 +4,7 @@ import { UploadUtils } from '../utils/upload-utils';
 
 /**
  * Custom hook to test API connectivity on mount
- * Displays success or error alert to the user
+ * Displays error toast to the user if connection fails
  */
 export function useApiConnectionTest() {
   useEffect(() => {
@@ -17,7 +17,7 @@ export function useApiConnectionTest() {
         );
         const health = await apiService.getHealthCheck();
         console.log('[UploadScreen] ✅ API connection successful:', health);
-        UploadUtils.showApiConnectionSuccess(health.status);
+        // Success toast removed - only show errors to reduce intrusiveness
       } catch (error) {
         console.error('[UploadScreen] ❌ API connection failed:', error);
         const errorMsg = error instanceof Error ? error.message : 'Unknown error';

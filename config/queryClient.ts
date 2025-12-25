@@ -1,4 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
+import { TOAST_CONSTANTS } from '../constants/toast';
+import { ToastUtils } from '../utils/toast-utils';
 
 // Default options for the QueryClient
 const defaultQueryClientOptions = {
@@ -15,10 +17,13 @@ const defaultQueryClientOptions = {
     mutations: {
         // --- Global Error Handling for all Mutations ---
         onError: (error: Error) => {
-            // This is the ideal place to show a global toast/alert for failed mutations.
             console.error("Global Mutation Error:", error.message);
-            // Example for Expo/React Native: 
-            // Alert.alert("Error", error.message || "An unknown error occurred.");
+            // Show toast notification for failed mutations
+            ToastUtils.error(
+                'Request Failed',
+                error.message || 'An unknown error occurred. Please try again.',
+                TOAST_CONSTANTS.DURATION.MEDIUM
+            );
         }
     }
 };

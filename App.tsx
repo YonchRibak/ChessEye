@@ -4,8 +4,10 @@ import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { TamaguiProvider, YStack } from 'tamagui';
 import { Navbar } from './components/navigation/navbar';
+import { toastConfig } from './components/ui/toast-config';
 import { queryClient } from './config/queryClient';
 import AppNavigator from './navigation/AppNavigator';
 import tamaguiConfig from './tamagui.config';
@@ -26,8 +28,8 @@ GlobalErrorHandler.install();
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <TamaguiProvider config={tamaguiConfig} defaultTheme="light">
+      <TamaguiProvider config={tamaguiConfig} defaultTheme="light">
+        <SafeAreaProvider>
           <QueryClientProvider client={queryClient}>
             <NavigationContainer>
               <YStack flex={1}>
@@ -36,8 +38,9 @@ export default function App() {
               </YStack>
             </NavigationContainer>
           </QueryClientProvider>
-        </TamaguiProvider>
-      </SafeAreaProvider>
+        </SafeAreaProvider>
+        <Toast config={toastConfig} />
+      </TamaguiProvider>
     </GestureHandlerRootView>
   );
 }
