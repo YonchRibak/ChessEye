@@ -48,7 +48,7 @@ export function ExternalLinkButton({
       }
     } catch (error) {
       ToastUtils.error('Error', 'Failed to open link', TOAST_CONSTANTS.DURATION.SHORT);
-      console.error('Error opening URL:', error);
+      console.log('Error opening URL:', error);
     }
   };
 

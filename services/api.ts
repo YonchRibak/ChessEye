@@ -38,11 +38,11 @@ api.interceptors.response.use(
             }
             
             // Handle generic HTTP errors (e.g., 404, 500)
-            console.error(`HTTP Error ${status}:`, errorData);
+            console.log(`HTTP Error ${status}:`, errorData);
             return Promise.reject(new Error(`Server Error: Status ${status}`));
         } else if (error.request) {
             // Request was made but no response received (e.g., network timeout, server down)
-            console.error('[API Error] Network error - Request details:', {
+            console.log('[API Error] Network error - Request details:', {
                 baseURL: API_BASE_URL,
                 url: error.config?.url,
                 method: error.config?.method,
@@ -88,9 +88,9 @@ export const predictChessPosition = async (
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            console.error("Prediction API Error:", error.response?.data || error.message);
+            console.log("Prediction API Error:", error.response?.data || error.message);
         } else {
-            console.error("Prediction Unknown Error:", error);
+            console.log("Prediction Unknown Error:", error);
         }
         throw error;
     }

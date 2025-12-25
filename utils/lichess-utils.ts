@@ -60,7 +60,7 @@ export class LichessUtils {
 
       console.log(`Opened Lichess editor with FEN: ${fen}`);
     } catch (error) {
-      console.error('Failed to open Lichess editor:', error);
+      console.log('Failed to open Lichess editor:', error);
       throw new Error(
         error instanceof Error
           ? `Failed to open Lichess: ${error.message}`

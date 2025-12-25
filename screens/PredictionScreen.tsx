@@ -77,7 +77,7 @@ export default function PredictionScreen() {
       setPredictionData(newPrediction);
       setCorrectedFen(null); // Reset correction
     } catch (error) {
-      console.error('[PredictionScreen] Failed to get fresh prediction:', error);
+      console.log('[PredictionScreen] Failed to get fresh prediction:', error);
     }
   };
 

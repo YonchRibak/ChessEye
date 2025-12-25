@@ -19,7 +19,7 @@ export function useApiConnectionTest() {
         console.log('[UploadScreen] ✅ API connection successful:', health);
         // Success toast removed - only show errors to reduce intrusiveness
       } catch (error) {
-        console.error('[UploadScreen] ❌ API connection failed:', error);
+        console.log('[UploadScreen] ❌ API connection failed:', error);
         const errorMsg = error instanceof Error ? error.message : 'Unknown error';
         UploadUtils.showApiConnectionError(errorMsg);
       }

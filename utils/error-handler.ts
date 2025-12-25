@@ -51,7 +51,7 @@ export class GlobalErrorHandler {
           this.originalHandler(error, isFatal);
         } else {
           // Fallback: log the error
-          console.error('[GlobalErrorHandler] Uncaught error:', error);
+          console.log('[GlobalErrorHandler] Uncaught error:', error);
           if (isFatal) {
             throw error;
           }
@@ -60,7 +60,7 @@ export class GlobalErrorHandler {
 
       console.log('[GlobalErrorHandler] Installed successfully');
     } catch (error) {
-      console.error('[GlobalErrorHandler] Failed to install:', error);
+      console.log('[GlobalErrorHandler] Failed to install:', error);
     }
   }
 

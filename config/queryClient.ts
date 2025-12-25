@@ -17,13 +17,11 @@ const defaultQueryClientOptions = {
     mutations: {
         // --- Global Error Handling for all Mutations ---
         onError: (error: Error) => {
-            console.error("Global Mutation Error:", error.message);
-            // Show toast notification for failed mutations
-            ToastUtils.error(
-                'Request Failed',
-                error.message || 'An unknown error occurred. Please try again.',
-                TOAST_CONSTANTS.DURATION.MEDIUM
-            );
+            // Log errors for debugging (individual mutations handle their own toast notifications)
+            console.log("Global Mutation Error:", error.message);
+
+            // NOTE: Individual mutation hooks already show specific error toasts
+            // This is just a fallback logger - not showing duplicate toasts
         }
     }
 };

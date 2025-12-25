@@ -62,7 +62,7 @@ export function useSubmissionFlow({ correctionMutation, predictionId, correctedF
 
       setSuccessTimer(timer);
     } catch (error) {
-      console.error('Failed to submit correction:', error);
+      console.log('Failed to submit correction:', error);
       // Reset to idle state on error to allow retry
       setSubmissionState('idle');
     }
@@ -77,7 +77,7 @@ export function useSubmissionFlow({ correctionMutation, predictionId, correctedF
       await LichessUtils.openLichessEditor(correctedFen);
       // Stay on screen (per user preference)
     } catch (error) {
-      console.error('Failed to open Lichess editor:', error);
+      console.log('Failed to open Lichess editor:', error);
     }
   };
 

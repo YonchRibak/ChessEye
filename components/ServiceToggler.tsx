@@ -41,7 +41,7 @@ export function ServiceToggler({ onSwitchSuccess }: ServiceTogglerProps = {}) {
   }
 
   if (isError || !currentServiceData) {
-    console.error('[ServiceToggler] Error fetching current service:', error);
+    console.log('[ServiceToggler] Error fetching current service:', error);
     return (
       <XStack
         paddingHorizontal="$3"
@@ -128,7 +128,7 @@ export function ServiceToggler({ onSwitchSuccess }: ServiceTogglerProps = {}) {
         }
       },
       onError: (error) => {
-        console.error('[ServiceToggler] Switch failed:', error);
+        console.log('[ServiceToggler] Switch failed:', error);
       },
     });
   };

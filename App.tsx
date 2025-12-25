@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { LogBox } from 'react-native';
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -12,6 +13,12 @@ import { queryClient } from './config/queryClient';
 import AppNavigator from './navigation/AppNavigator';
 import tamaguiConfig from './tamagui.config';
 import { GlobalErrorHandler } from './utils/error-handler';
+
+// Suppress specific LogBox warnings
+LogBox.ignoreLogs([
+  'GlobalErrorHandler',
+  'setLayoutAnimationEnabledExperimental',
+]);
 
 // Configure Reanimated logger to suppress strict mode warnings
 // These warnings come from react-native-chessboard library's internal usage
