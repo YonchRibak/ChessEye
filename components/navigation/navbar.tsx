@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image } from 'react-native';
 import { Text, XStack } from 'tamagui';
+import { COLORS } from '../../constants/colors';
 import { HamburgerMenu } from './hamburger-menu';
 
 /**
@@ -17,7 +18,7 @@ import { HamburgerMenu } from './hamburger-menu';
 export function Navbar() {
   return (
     <XStack
-      backgroundColor="$background"
+      backgroundColor={COLORS.NAVBAR_BACKGROUND}
       borderBottomWidth={1}
       borderBottomColor="$gray6"
       paddingHorizontal="$4"
