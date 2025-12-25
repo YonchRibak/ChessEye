@@ -1,6 +1,7 @@
 import React from 'react';
 import { YStack } from 'tamagui';
 import { ImageSourceButton } from '../components/upload/ImageSourceButton';
+import { InstructionText } from '../components/upload/InstructionText';
 import { ProcessingIndicator } from '../components/upload/ProcessingIndicator';
 import { UPLOAD_CONSTANTS } from '../constants/upload';
 import { useApiConnectionTest } from '../hooks/useApiConnectionTest';
@@ -27,6 +28,9 @@ export default function UploadScreen() {
       alignItems="center"
       gap="$6"
     >
+      {/* Instruction Text */}
+      <InstructionText />
+
       {/* Action Buttons */}
       <YStack gap="$4" width="100%" maxWidth={UPLOAD_CONSTANTS.BUTTONS.MAX_WIDTH}>
         <ImageSourceButton

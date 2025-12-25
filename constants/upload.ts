@@ -4,6 +4,11 @@
  */
 
 export const UPLOAD_CONSTANTS = {
+  // Instructions
+  INSTRUCTIONS: {
+    TEXT: 'Upload an image of a chess position for the models to analyze',
+  },
+
   // Button labels
   BUTTONS: {
     CAMERA_LABEL: 'Take Photo',
