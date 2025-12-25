@@ -119,7 +119,7 @@ export const ABOUT_FRONTEND_CONTENT: AboutSectionContent = {
     },
     {
       category: 'UI & Styling',
-      technologies: ['Tamagui', 'NativeWind'],
+      technologies: ['Tamagui'],
     },
     {
       category: 'Chess Library',
