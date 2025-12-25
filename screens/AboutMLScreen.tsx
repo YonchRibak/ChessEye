@@ -2,25 +2,25 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { Text, YStack } from 'tamagui';
 import { AboutSection, InfoCard } from '../components/about';
-import { ABOUT_PROJECT_CONTENT } from '../constants/aboutContent';
+import { ABOUT_ML_CONTENT } from '../constants/aboutContent';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-interface AboutProjectScreenProps {
+interface AboutMLScreenProps {
   navigation: NavigationProp;
 }
 
 /**
- * About Project Screen - Main Landing Page
- * Displays ChessEye project overview and navigates to ML and Frontend sections
+ * About Machine Learning Approaches Screen
+ * Displays overview of ML methodologies and navigates to End-to-End and Pipeline screens
  */
-export default function AboutProjectScreen({ navigation }: AboutProjectScreenProps) {
-  const { header, summary, cards } = ABOUT_PROJECT_CONTENT;
+export default function AboutMLScreen({ navigation }: AboutMLScreenProps) {
+  const { header, taskDescription, summary, cards } = ABOUT_ML_CONTENT;
 
   return (
-    <AboutSection header={header}>
-      {/* Project Summary */}
+    <AboutSection header={header} subtitle={taskDescription}>
+      {/* Summary */}
       {summary && (
         <Text fontSize="$5" color="$gray11" lineHeight="$2">
           {summary}
@@ -29,7 +29,7 @@ export default function AboutProjectScreen({ navigation }: AboutProjectScreenPro
 
       {/* Navigation Cards */}
       {cards && cards.length > 0 && (
-        <YStack gap="$3" marginTop="$3">
+        <YStack gap="$3" marginTop="$2">
           {cards.map((card, index) => (
             <InfoCard
               key={index}
