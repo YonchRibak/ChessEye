@@ -48,7 +48,7 @@ const AppNavigator = () => {
             <Stack.Screen
                 name="AboutProject"
                 component={AboutProjectScreen}
-                options={{ title: 'About This Project' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="AboutAuthor"
@@ -58,32 +58,32 @@ const AppNavigator = () => {
             <Stack.Screen
                 name="AboutML"
                 component={AboutMLScreen}
-                options={{ title: 'Machine Learning' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="AboutEndToEnd"
                 component={AboutEndToEndScreen}
-                options={{ title: 'End-to-End CNN' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="AboutPipeline"
                 component={AboutPipelineScreen}
-                options={{ title: 'Pipeline Approach' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="AboutFrontend"
                 component={AboutFrontendScreen}
-                options={{ title: 'Frontend Architecture' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="AboutBoardEditor"
                 component={AboutBoardEditorScreen}
-                options={{ title: 'Board Editor' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="AboutBackend"
                 component={AboutBackendScreen}
-                options={{ title: 'Backend Architecture' }}
+                options={{ headerShown: false }}
             />
         </Stack.Navigator>
     );

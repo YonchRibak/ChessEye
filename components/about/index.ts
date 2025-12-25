@@ -6,3 +6,4 @@
 export { AboutSection } from './AboutSection';
 export { ExternalLinkButton } from './ExternalLinkButton';
 export { InfoCard } from './InfoCard';
+export { TechStack } from './TechStack';

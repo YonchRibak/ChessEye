@@ -1,23 +1,37 @@
 import React from 'react';
 import { Text, YStack } from 'tamagui';
-import { AboutSection } from '../components/about';
+import { AboutSection, ExternalLinkButton, TechStack } from '../components/about';
 import { ABOUT_BACKEND_CONTENT, ABOUT_UI_TEXT } from '../constants/aboutContent';
 
 /**
  * About Backend Architecture Screen
  * Displays information about the FastAPI backend service
- * Note: This is currently a placeholder screen
  */
 export default function AboutBackendScreen() {
-  const { header, summary, features } = ABOUT_BACKEND_CONTENT;
+  const { header, summary, features, techStack, externalLink, linkText } = ABOUT_BACKEND_CONTENT;
 
   return (
     <AboutSection header={header}>
       {/* Summary */}
       {summary && (
-        <Text fontSize="$5" color="$gray11" lineHeight="$2">
+        <Text fontSize="$4" color="$gray11" lineHeight="$2" textAlign="center">
           {summary}
         </Text>
+      )}
+
+      {/* Tech Stack */}
+      {techStack && techStack.length > 0 && (
+        <TechStack items={techStack} title="Technology Stack" />
+      )}
+
+      {/* External Link */}
+      {externalLink && (
+        <ExternalLinkButton
+          url={externalLink}
+          label={linkText || ABOUT_UI_TEXT.BUTTONS.VIEW_REPOSITORY}
+          icon="logo-github"
+          variant="outline"
+        />
       )}
 
       {/* Key Features */}
@@ -35,20 +49,6 @@ export default function AboutBackendScreen() {
           </YStack>
         </YStack>
       )}
-
-      {/* Placeholder note */}
-      <YStack
-        backgroundColor="$blue2"
-        padding="$3"
-        borderRadius="$3"
-        borderWidth={1}
-        borderColor="$blue6"
-        marginTop="$2"
-      >
-        <Text fontSize="$3" color="$blue11" fontStyle="italic">
-          Note: Detailed backend documentation coming soon.
-        </Text>
-      </YStack>
     </AboutSection>
   );
 }

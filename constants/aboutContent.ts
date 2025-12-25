@@ -25,6 +25,12 @@ export const ABOUT_PROJECT_CONTENT: AboutSectionContent = {
         'Cross-platform React Native application with high-performance UI and efficient camera/API integration.',
       route: 'AboutFrontend',
     },
+    {
+      title: 'Backend Architecture',
+      summary:
+        'FastAPI backend service handling ML model serving, image processing, and data persistence.',
+      route: 'AboutBackend',
+    },
   ],
 };
 
@@ -88,11 +94,41 @@ export const ABOUT_PIPELINE_CONTENT: AboutSectionContent = {
  * Frontend Architecture screen content
  */
 export const ABOUT_FRONTEND_CONTENT: AboutSectionContent = {
-  header: 'Frontend Architecture (ChessEye)',
+  header: 'Frontend Architecture',
   summary:
     'A cross-platform React Native application designed for high-performance UI and efficient camera/API integration.',
   externalLink: 'https://github.com/YonchRibak/ChessEye',
   linkText: 'View GitHub Repository',
+  techStack: [
+    {
+      category: 'Framework',
+      technologies: ['React Native', 'Expo SDK 54'],
+    },
+    {
+      category: 'Language',
+      technologies: ['TypeScript'],
+    },
+    {
+      category: 'Navigation',
+      technologies: ['React Navigation'],
+    },
+    {
+      category: 'State Management',
+      technologies: ['TanStack Query (React Query)'],
+    },
+    {
+      category: 'UI & Styling',
+      technologies: ['Tamagui', 'NativeWind'],
+    },
+    {
+      category: 'Chess Library',
+      technologies: ['react-native-chess-board-editor', 'chess.js'],
+    },
+    {
+      category: 'HTTP Client',
+      technologies: ['Axios'],
+    },
+  ],
   cards: [
     {
       title: 'Board Editor Package',
@@ -121,11 +157,39 @@ export const ABOUT_BOARD_EDITOR_CONTENT: AboutSectionContent = {
 };
 
 /**
- * Backend/API screen content (placeholder)
+ * Backend/API screen content
  */
 export const ABOUT_BACKEND_CONTENT: AboutSectionContent = {
   header: 'Backend Architecture',
   summary: 'FastAPI backend service handling image processing and chess position prediction.',
+  externalLink: 'https://github.com/YonchRibak/board2fen/tree/main/api',
+  linkText: 'View GitHub Repository',
+  techStack: [
+    {
+      category: 'Framework',
+      technologies: ['FastAPI', 'Uvicorn'],
+    },
+    {
+      category: 'Language',
+      technologies: ['Python 3.11+'],
+    },
+    {
+      category: 'Machine Learning',
+      technologies: ['PyTorch', 'torchvision', 'Ultralytics YOLO'],
+    },
+    {
+      category: 'Image Processing',
+      technologies: ['OpenCV', 'Pillow', 'NumPy'],
+    },
+    {
+      category: 'Database',
+      technologies: ['SQLAlchemy', 'SQLite/PostgreSQL'],
+    },
+    {
+      category: 'API',
+      technologies: ['RESTful API', 'Pydantic', 'CORS'],
+    },
+  ],
   features: [
     'RESTful API for prediction and correction endpoints',
     'Model serving for ResNeXt-101 and YOLO models',

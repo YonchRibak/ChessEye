@@ -14,7 +14,7 @@ export default function AboutBoardEditorScreen() {
     <AboutSection header={header}>
       {/* Summary */}
       {summary && (
-        <Text fontSize="$5" color="$gray11" lineHeight="$2">
+        <Text fontSize="$4" color="$gray11" lineHeight="$2" textAlign="center">
           {summary}
         </Text>
       )}
@@ -37,14 +37,12 @@ export default function AboutBoardEditorScreen() {
 
       {/* External Link */}
       {externalLink && (
-        <YStack marginTop="$2">
-          <ExternalLinkButton
-            url={externalLink}
-            label={linkText || ABOUT_UI_TEXT.BUTTONS.VIEW_REPOSITORY}
-            icon="logo-github"
-            variant="outline"
-          />
-        </YStack>
+        <ExternalLinkButton
+          url={externalLink}
+          label={linkText || ABOUT_UI_TEXT.BUTTONS.VIEW_REPOSITORY}
+          icon="logo-github"
+          variant="outline"
+        />
       )}
     </AboutSection>
   );

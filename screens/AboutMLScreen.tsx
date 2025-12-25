@@ -22,14 +22,14 @@ export default function AboutMLScreen({ navigation }: AboutMLScreenProps) {
     <AboutSection header={header} subtitle={taskDescription}>
       {/* Summary */}
       {summary && (
-        <Text fontSize="$5" color="$gray11" lineHeight="$2">
+        <Text fontSize="$4" color="$gray11" lineHeight="$2" textAlign="center">
           {summary}
         </Text>
       )}
 
       {/* Navigation Cards */}
       {cards && cards.length > 0 && (
-        <YStack gap="$3" marginTop="$2">
+        <YStack gap="$3">
           {cards.map((card, index) => (
             <InfoCard
               key={index}

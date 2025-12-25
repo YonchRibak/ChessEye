@@ -20,6 +20,16 @@ export interface AboutCardData {
 }
 
 /**
+ * Technology stack item for portfolio display
+ */
+export interface TechStackItem {
+  /** Category name (e.g., "Framework", "Language", "Database") */
+  category: string;
+  /** List of technologies in this category */
+  technologies: string[];
+}
+
+/**
  * Content structure for a complete About section/screen
  */
 export interface AboutSectionContent {
@@ -37,6 +47,8 @@ export interface AboutSectionContent {
   externalLink?: string;
   /** Optional link text */
   linkText?: string;
+  /** Optional tech stack for portfolio display */
+  techStack?: TechStackItem[];
 }
 
 /**

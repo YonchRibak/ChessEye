@@ -22,14 +22,14 @@ export default function AboutProjectScreen({ navigation }: AboutProjectScreenPro
     <AboutSection header={header}>
       {/* Project Summary */}
       {summary && (
-        <Text fontSize="$5" color="$gray11" lineHeight="$2">
+        <Text fontSize="$4" color="$gray11" lineHeight="$2" textAlign="center">
           {summary}
         </Text>
       )}
 
       {/* Navigation Cards */}
       {cards && cards.length > 0 && (
-        <YStack gap="$3" marginTop="$3">
+        <YStack gap="$3">
           {cards.map((card, index) => (
             <InfoCard
               key={index}

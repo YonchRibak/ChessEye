@@ -1,7 +1,7 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { Text, YStack } from 'tamagui';
-import { AboutSection, ExternalLinkButton, InfoCard } from '../components/about';
+import { AboutSection, ExternalLinkButton, InfoCard, TechStack } from '../components/about';
 import { ABOUT_FRONTEND_CONTENT, ABOUT_UI_TEXT } from '../constants/aboutContent';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
@@ -16,32 +16,35 @@ interface AboutFrontendScreenProps {
  * Displays information about the ChessEye React Native app and links to Board Editor
  */
 export default function AboutFrontendScreen({ navigation }: AboutFrontendScreenProps) {
-  const { header, summary, cards, externalLink, linkText } = ABOUT_FRONTEND_CONTENT;
+  const { header, summary, cards, externalLink, linkText, techStack } = ABOUT_FRONTEND_CONTENT;
 
   return (
     <AboutSection header={header}>
       {/* Summary */}
       {summary && (
-        <Text fontSize="$5" color="$gray11" lineHeight="$2">
+        <Text fontSize="$4" color="$gray11" lineHeight="$2" textAlign="center">
           {summary}
         </Text>
       )}
 
+      {/* Tech Stack */}
+      {techStack && techStack.length > 0 && (
+        <TechStack items={techStack} title="Technology Stack" />
+      )}
+
       {/* External Link */}
       {externalLink && (
-        <YStack marginTop="$2">
-          <ExternalLinkButton
-            url={externalLink}
-            label={linkText || ABOUT_UI_TEXT.BUTTONS.VIEW_REPOSITORY}
-            icon="logo-github"
-            variant="outline"
-          />
-        </YStack>
+        <ExternalLinkButton
+          url={externalLink}
+          label={linkText || ABOUT_UI_TEXT.BUTTONS.VIEW_REPOSITORY}
+          icon="logo-github"
+          variant="outline"
+        />
       )}
 
       {/* Feature Focus - Board Editor Card */}
       {cards && cards.length > 0 && (
-        <YStack gap="$3" marginTop="$3">
+        <YStack gap="$3" marginTop="$2">
           <Text fontSize="$6" fontWeight="600" color="$gray12">
             Feature Focus
           </Text>

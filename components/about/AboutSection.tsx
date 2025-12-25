@@ -29,7 +29,7 @@ export function AboutSection({
   header,
   subtitle,
   children,
-  padding = '$4',
+  padding = '$5',
 }: AboutSectionProps) {
   return (
     <ScrollView
@@ -40,33 +40,44 @@ export function AboutSection({
       <YStack
         flex={1}
         backgroundColor="$background"
-        padding={padding}
-        gap="$4"
+        paddingHorizontal={padding}
+        paddingVertical="$6"
+        gap="$5"
+        alignItems="center"
       >
-        {/* Header Section */}
-        <YStack gap="$2">
-          <Text
-            fontSize="$8"
-            fontWeight="700"
-            color="$gray12"
-            lineHeight="$1"
-          >
-            {header}
-          </Text>
-          {subtitle && (
+        {/* Content Container with max width */}
+        <YStack
+          width="100%"
+          maxWidth={600}
+          gap="$5"
+        >
+          {/* Header Section */}
+          <YStack gap="$3" paddingTop="$4">
             <Text
-              fontSize="$5"
-              color="$gray11"
-              lineHeight="$2"
+              fontSize="$9"
+              fontWeight="700"
+              color="$gray12"
+              lineHeight={40}
+              textAlign="center"
             >
-              {subtitle}
+              {header}
             </Text>
-          )}
-        </YStack>
+            {subtitle && (
+              <Text
+                fontSize="$5"
+                color="$gray11"
+                lineHeight={24}
+                textAlign="center"
+              >
+                {subtitle}
+              </Text>
+            )}
+          </YStack>
 
-        {/* Content Section */}
-        <YStack gap="$4" flex={1}>
-          {children}
+          {/* Content Section */}
+          <YStack gap="$4">
+            {children}
+          </YStack>
         </YStack>
       </YStack>
     </ScrollView>
