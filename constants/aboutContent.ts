@@ -216,3 +216,27 @@ export const ABOUT_UI_TEXT = {
     METHODOLOGIES_TITLE: 'Methodologies',
   },
 } as const;
+
+/**
+ * About Author screen content
+ */
+export const ABOUT_AUTHOR_CONTENT = {
+  name: 'Jonathan (Yonch) Ribak',
+  description:
+    'I am a full-stack developer and data scientist with expertise in both frontend and backend technologies, specializing in React, Angular, Django, and Node.js, alongside advanced skills in Python, machine learning, and data analysis.',
+  imageSource: require('../assets/author_pic.jpg'),
+  links: {
+    github: {
+      url: 'https://github.com/YonchRibak',
+      label: 'GitHub',
+    },
+    linkedin: {
+      url: 'https://www.linkedin.com/in/jonathan-ribak-546686110',
+      label: 'LinkedIn',
+    },
+    email: {
+      address: 'yonch.baalil@gmail.com',
+      label: 'Email',
+    },
+  },
+} as const;
