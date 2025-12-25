@@ -71,9 +71,9 @@ export function ServiceToggler({ onSwitchSuccess }: ServiceTogglerProps = {}) {
     // Map class names to user-friendly names
     const serviceMap: Record<string, string> = {
       'EndToEndPipelineService': 'End-to-End',
-      'MultiModelPipelineService': 'Multi-Model',
+      'MultiModelPipelineService': 'Pipeline',
       'end_to_end': 'End-to-End',
-      'multi_model_pipeline': 'Multi-Model',
+      'multi_model_pipeline': 'Pipeline',
     };
 
     return serviceMap[serviceType] || serviceType;
