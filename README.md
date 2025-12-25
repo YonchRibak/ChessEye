@@ -1,50 +1,267 @@
-# Welcome to your Expo app 👋
+# ChessEye
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+> Computer Vision-Powered Chess Position Recognition
 
-## Get started
+ChessEye is a cross-platform mobile application that uses computer vision and machine learning to extract digital chess positions (FEN notation) from physical board images. Simply snap a photo of any chess position, and the app instantly converts it into a digital format you can edit, analyze, and share.
 
-1. Install dependencies
+![ChessEye Logo](assets/images/logo.png)
 
+## Overview
+
+ChessEye combines computer vision and machine learning to bridge the gap between physical chess boards and digital analysis tools. The project explores multiple ML approaches and delivers a production-ready React Native application with seamless camera integration and real-time position editing.
+
+**Key Features:**
+- 📸 Capture chess positions via camera or photo library
+- 🧠 ML-powered position recognition using ResNeXt-101 CNN
+- ✏️ Interactive board editor with FEN manipulation
+- 🔄 User correction feedback loop to improve model accuracy
+- 🌐 Lichess integration for position analysis
+- 📱 Cross-platform support (iOS, Android, Web)
+
+## Technology Stack
+
+### Frontend
+- **Framework:** React Native with Expo SDK 54
+- **Language:** TypeScript
+- **Navigation:** React Navigation (Stack Navigator)
+- **State Management:** TanStack Query (React Query)
+- **UI Components:** Tamagui (token-based design system)
+- **Notifications:** react-native-toast-message
+- **Chess Library:** [react-native-chess-board-editor](https://github.com/YonchRibak/react-native-chess-board-editor), chess.js
+- **HTTP Client:** Axios with custom interceptors
+- **Animation:** react-native-reanimated
+
+### Backend
+- **Framework:** FastAPI
+- **Language:** Python 3.11+
+- **ML Stack:** PyTorch, torchvision, Ultralytics YOLO
+- **Image Processing:** OpenCV, Pillow, NumPy
+- **Database:** SQLAlchemy with SQLite/PostgreSQL
+- **API:** RESTful with Pydantic validation
+
+*Note: The backend is a separate service. See [backend repository](https://github.com/YonchRibak/board2fen/tree/main/api) for setup instructions.*
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- Expo CLI
+- iOS Simulator (macOS) or Android Emulator
+- Backend API running (see [backend setup](https://github.com/YonchRibak/board2fen/tree/main/api))
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/YonchRibak/ChessEye.git
+   cd ChessEye
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. **Configure environment variables**
    ```bash
-   npx expo start
+   cp .env.example .env
    ```
 
-In the output, you'll find options to open the app in a
+   Edit `.env` and set your API URL:
+   ```env
+   # For iOS Simulator / Web
+   API_BASE_URL=http://localhost:8081
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   # For Android Emulator (special IP for host machine)
+   API_BASE_URL=http://10.0.2.2:8081
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+   # For Physical Device (use your computer's local IP)
+   API_BASE_URL=http://192.168.1.100:8081
+   ```
 
-## Get a fresh project
+4. **Start the development server**
+   ```bash
+   npm start
+   ```
 
-When you're ready, run:
+5. **Run on your platform**
+   - iOS: Press `i` or run `npm run ios`
+   - Android: Press `a` or run `npm run android`
+   - Web: Press `w` or run `npm run web`
+
+## Development Commands
 
 ```bash
-npm run reset-project
+npm start              # Start Expo development server
+npm run android        # Start on Android emulator/device
+npm run ios            # Start on iOS simulator/device
+npm run web            # Start web version
+npm run lint           # Run ESLint
+npm run reset-project  # Reset project to blank slate
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Project Structure
 
-## Learn more
+```
+ChessEye/
+├── screens/           # Main application screens
+│   ├── UploadScreen.tsx
+│   ├── PredictionScreen.tsx
+│   ├── AboutProjectScreen.tsx
+│   ├── AboutAuthorScreen.tsx
+│   └── ...
+├── components/        # Reusable UI components
+│   ├── prediction/    # Prediction-specific components
+│   ├── navigation/    # Navigation components
+│   ├── about/         # About section components
+│   └── ui/            # Reusable UI primitives
+├── hooks/             # Custom React hooks
+│   ├── api.ts         # React Query hooks
+│   ├── useImageUpload.ts
+│   ├── useSubmissionFlow.ts
+│   └── ...
+├── services/          # API and external services
+│   └── api.ts         # Axios instance and API functions
+├── utils/             # Utility functions
+│   ├── toast-utils.ts
+│   ├── image-utils.ts
+│   ├── lichess-utils.ts
+│   └── ...
+├── types/             # TypeScript type definitions
+│   ├── api.ts
+│   ├── toast.ts
+│   └── ...
+├── constants/         # App constants
+│   ├── toast.ts
+│   ├── aboutContent.ts
+│   └── ...
+├── navigation/        # Navigation configuration
+│   └── AppNavigator.tsx
+├── config/            # App configuration
+│   └── queryClient.ts
+└── assets/            # Static assets (images, fonts)
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Architecture
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Application Flow
 
-## Join the community
+1. **Entry Point** (`App.tsx`)
+   - Providers: `SafeAreaProvider` → `QueryClientProvider` → `NavigationContainer`
+   - Toast component with custom configuration
+   - Global error handler initialization
 
-Join our community of developers creating universal apps.
+2. **Navigation** (Stack-based)
+   - 10 screens with type-safe routing
+   - Main flow: Upload → Prediction
+   - About screens form a learning content hub
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+3. **API Layer** (3-tier)
+   - Service Layer: Raw Axios API calls
+   - Hook Layer: React Query hooks with caching
+   - Component Layer: Screens consume hooks
+
+### Key Features
+
+#### Image Upload & Prediction
+- Uses `expo-image-picker` for camera/gallery access
+- Permission handling via `ImageUtils`
+- FormData upload with multipart/form-data
+- Automatic navigation to Prediction screen on success
+
+#### Position Editing
+- Custom `react-native-chess-board-editor` component
+- **No rule enforcement** - allows editing illegal positions (critical for ML predictions)
+- Real-time FEN synchronization
+- Editable turn, castling rights, and en passant metadata
+
+#### Correction Feedback Loop
+- Users can correct ML predictions
+- Corrections include full FEN, turn, castling, and en passant
+- Data flows back to API to improve model (retrains every 1,000 corrections)
+- Toast notifications for success/error states
+
+#### Lichess Integration
+- Opens corrected positions in Lichess board editor
+- In-app browser on native platforms (expo-web-browser)
+- New tab on web platform
+- Animated button appearance with spring physics
+
+### Error Handling
+
+Three-tier error handling system:
+1. **Axios Interceptor** - Transforms API errors into structured Error objects
+2. **Global Mutation Handler** - Catches all mutation errors for logging
+3. **GlobalErrorHandler** - Catches chess.js errors from illegal positions (prevents crashes)
+
+### State Management
+
+- **Server State:** TanStack Query with 5-minute stale time, 15-minute cache
+- **Local State:** Component-level useState/useReducer
+- **Navigation State:** React Navigation route params
+
+## Machine Learning Approaches
+
+ChessEye evaluates two ML methodologies:
+
+### End-to-End CNN (Current Implementation)
+- Single ResNeXt-101 architecture trained on ChessReD dataset (10,800 images)
+- Treats recognition as dense classification (64 squares simultaneously)
+- Leverages global image context
+- [View Kaggle Notebook](https://www.kaggle.com/code/jonathanribak/chess-board-recognition-end-2-end-chessred-dataset)
+
+### Preprocessing Pipeline
+- Modular sequence: YOLO detection → Canny edge detection → perspective correction
+- Tile-by-tile classification after image warping
+- [View Kaggle Notebook](https://www.kaggle.com/code/jonathanribak/chess-board-recognition-pipeline-chessred-dataset)
+
+## Configuration
+
+### Environment Variables
+- `API_BASE_URL` - Backend API URL (required)
+
+Configuration flow:
+1. `.env` file (gitignored, local settings)
+2. `app.config.js` (reads .env, exposes via expo-constants)
+3. `services/api.ts` (uses Constants.expoConfig.extra.apiBaseUrl)
+
+### TypeScript
+- Strict mode enabled
+- Path alias `@/*` maps to root directory
+- Extends Expo's base tsconfig
+
+### Expo Configuration
+- App scheme: `chesseye://`
+- React Compiler experimental feature enabled
+- Typed routes enabled
+- New Architecture enabled
+- Edge-to-edge display on Android
+
+
+
+## Related Projects
+
+- **Backend API:** [board2fen](https://github.com/YonchRibak/board2fen/tree/main/api)
+- **Chess Board Editor:** [react-native-chess-board-editor](https://github.com/YonchRibak/react-native-chess-board-editor)
+- **End-to-End Model:** [Kaggle Notebook](https://www.kaggle.com/code/jonathanribak/chess-board-recognition-end-2-end-chessred-dataset)
+- **Pipeline Model:** [Kaggle Notebook](https://www.kaggle.com/code/jonathanribak/chess-board-recognition-pipeline-chessred-dataset)
+
+## Author
+
+**Jonathan (Yonch) Ribak**
+
+Full-stack developer and data scientist specializing in React, Angular, Django, Node.js, Python, machine learning, and data analysis.
+
+- GitHub: [@YonchRibak](https://github.com/YonchRibak)
+- LinkedIn: [Jonathan Ribak](https://www.linkedin.com/in/jonathan-ribak-546686110)
+- Email: yonch.baalil@gmail.com
+
+## License
+
+This project is private and proprietary.
+
+---
+
+Built with ❤️ using React Native, Expo, and PyTorch
