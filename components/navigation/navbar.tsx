@@ -1,4 +1,5 @@
 import React from 'react';
+import { Image } from 'react-native';
 import { Text, XStack } from 'tamagui';
 import { HamburgerMenu } from './hamburger-menu';
 
@@ -31,18 +32,25 @@ export function Navbar() {
       elevation={2}
       zIndex={999}
     >
-      {/* App Logo/Title */}
-      <XStack alignItems="center" gap="$2">
+      {/* App Logo on Left */}
+      <Image
+        source={require('../../assets/chesseye-logo.png')}
+        style={{ width: 40, height: 40 }}
+        resizeMode="contain"
+      />
+
+      {/* Centered Title */}
+      <XStack flex={1} alignItems="center" justifyContent="center">
         <Text
           fontSize="$7"
           fontWeight="700"
           color="$gray12"
         >
-          ♟️ ChessEye
+          ChessEye
         </Text>
       </XStack>
 
-      {/* Navigation Menu */}
+      {/* Navigation Menu on Right */}
       <HamburgerMenu />
     </XStack>
   );

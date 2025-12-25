@@ -6,7 +6,7 @@ module.exports = {
     slug: 'ChessEye',
     version: '1.0.0',
     orientation: 'portrait',
-    icon: './assets/images/icon.png',
+    icon: './assets/chesseye-logo.png',
     scheme: 'chesseye',
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
