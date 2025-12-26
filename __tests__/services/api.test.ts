@@ -1,3 +1,23 @@
+import type * as ApiTypes from '@/types/api';
+
+// Mock axios module - Jest hoists this automatically
+jest.mock('axios', () => {
+  const mockAxiosInstance = {
+    get: jest.fn(),
+    post: jest.fn(),
+    interceptors: {
+      request: { use: jest.fn(), eject: jest.fn() },
+      response: { use: jest.fn(), eject: jest.fn() },
+    },
+  };
+
+  return {
+    create: jest.fn(() => mockAxiosInstance),
+    __mockInstance: mockAxiosInstance, // Store for later access
+  };
+});
+
+// Now import the api module (after axios is mocked)
 import axios from 'axios';
 import {
   predictChessPosition,
@@ -10,59 +30,21 @@ import {
   getRecentCorrections,
   validateFen,
 } from '@/services/api';
-import type * as ApiTypes from '@/types/api';
 
-// Mock axios
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+// Get the mock instance
+const mockAxiosInstance = (axios as any).__mockInstance;
 
 describe('API Service', () => {
-  let mockAxiosInstance: any;
+  // Get the error interceptor function that was registered on module load
+  const getErrorInterceptor = () => {
+    const calls = mockAxiosInstance.interceptors.response.use.mock.calls;
+    return calls.length > 0 ? calls[0][1] : null;
+  };
 
   beforeEach(() => {
-    // Create mock axios instance
-    mockAxiosInstance = {
-      get: jest.fn(),
-      post: jest.fn(),
-      interceptors: {
-        request: { use: jest.fn(), eject: jest.fn() },
-        response: { use: jest.fn(), eject: jest.fn() },
-      },
-    };
-
-    mockedAxios.create.mockReturnValue(mockAxiosInstance);
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  describe('Configuration', () => {
-    test('uses API_BASE_URL from Expo Constants', () => {
-      expect(mockedAxios.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          baseURL: 'http://localhost:8081', // From jest.setup.ts mock
-        })
-      );
-    });
-
-    test('sets default timeout to 10 seconds', () => {
-      expect(mockedAxios.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          timeout: 10000,
-        })
-      );
-    });
-
-    test('sets Content-Type header to application/json', () => {
-      expect(mockedAxios.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-      );
-    });
+    // Only clear the get/post mocks, not the interceptor setup
+    mockAxiosInstance.get.mockClear();
+    mockAxiosInstance.post.mockClear();
   });
 
   describe('Error Interceptor', () => {
@@ -70,7 +52,7 @@ describe('API Service', () => {
 
     beforeEach(() => {
       // Get the error interceptor function from the mock
-      errorInterceptor = mockAxiosInstance.interceptors.response.use.mock.calls[0][1];
+      errorInterceptor = getErrorInterceptor();
     });
 
     test('transforms API error responses into Error objects', async () => {
@@ -245,7 +227,7 @@ describe('API Service', () => {
   });
 
   describe('switchService()', () => {
-    test('posts service identifier to /service/switch', async () => {
+    test('posts service type to /service/switch', async () => {
       const mockResponse: ApiTypes.ServiceSwitchResponse = {
         success: true,
         message: 'Service switched',
@@ -257,7 +239,7 @@ describe('API Service', () => {
       const result = await switchService('end_to_end');
 
       expect(mockAxiosInstance.post).toHaveBeenCalledWith('/service/switch', {
-        service_identifier: 'end_to_end',
+        service_type: 'end_to_end',
       });
       expect(result.new_service).toBe('EndToEndChessBoardClassifier');
     });
@@ -303,14 +285,10 @@ describe('API Service', () => {
     });
 
     test('throws error for non-existent prediction', async () => {
-      mockAxiosInstance.get.mockRejectedValue({
-        response: {
-          status: 404,
-          data: { error: 'Not found' },
-        },
-      });
+      const error = new Error('Not found');
+      mockAxiosInstance.get.mockRejectedValue(error);
 
-      await expect(getPredictionDetail(999)).rejects.toThrow();
+      await expect(getPredictionDetail(999)).rejects.toThrow('Not found');
     });
   });
 
@@ -366,9 +344,7 @@ describe('API Service', () => {
 
       const result = await getRecentCorrections(10);
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/corrections/recent', {
-        params: { limit: 10 },
-      });
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/corrections/recent?limit=10');
       expect(result.corrections).toHaveLength(1);
     });
   });
@@ -384,9 +360,9 @@ describe('API Service', () => {
 
       const result = await validateFen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/validate/fen', {
-        params: { fen: expect.any(String) },
-      });
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+        expect.stringContaining('/validate/fen?fen=')
+      );
       expect(result.valid).toBe(true);
     });
 

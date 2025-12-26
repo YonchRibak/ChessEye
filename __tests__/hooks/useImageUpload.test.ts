@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react-native';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { ImageUtils } from '@/utils/image-utils';
 import { UploadUtils } from '@/utils/upload-utils';
@@ -61,18 +61,29 @@ describe('useImageUpload', () => {
       fileName: 'test.jpg',
     });
 
-    mockMutateAsync.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
+    let resolveUpload: any;
+    mockMutateAsync.mockImplementation(() => new Promise((resolve) => { resolveUpload = resolve; }));
 
     const { result } = renderHook(() => useImageUpload());
 
-    const uploadPromise = act(async () => {
-      await result.current.openGallery();
+    // Start upload but don't wait for it
+    act(() => {
+      result.current.openGallery();
+    });
+
+    // Allow time for state update
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0));
     });
 
     // Check isProcessing is true during upload
     expect(result.current.isProcessing).toBe(true);
 
-    await uploadPromise;
+    // Complete the upload
+    await act(async () => {
+      resolveUpload({ success: true });
+      await new Promise(resolve => setTimeout(resolve, 0));
+    });
   });
 
   test('resets isProcessing to false after completion', async () => {

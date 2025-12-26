@@ -60,7 +60,8 @@ describe('LichessUtils', () => {
       await LichessUtils.openLichessEditor(fen);
 
       expect(WebBrowser.openBrowserAsync).toHaveBeenCalledWith(
-        expect.stringContaining('https://lichess.org/editor/')
+        expect.stringContaining('https://lichess.org/editor/'),
+        { presentationStyle: WebBrowser.WebBrowserPresentationStyle.AUTOMATIC }
       );
     });
 

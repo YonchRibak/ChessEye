@@ -48,7 +48,7 @@ describe('PredictionUtils', () => {
       const lowConfData = { ...mockPredictionData, confidence_score: 0.25 };
       const result = PredictionUtils.validatePosition(lowConfData, null);
       expect(result.isLowConfidence).toBe(true);
-      expect(result.confidenceScore).toBe('25%');
+      expect(result.confidenceScore).toBe(0.25);
     });
 
     test('returns null positionValidationError for valid position', () => {

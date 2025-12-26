@@ -18,8 +18,9 @@ describe('GlobalErrorHandler', () => {
   });
 
   afterEach(() => {
-    (global as any).ErrorUtils = originalErrorUtils;
+    // Uninstall BEFORE restoring ErrorUtils so it can properly reset
     GlobalErrorHandler.uninstall();
+    (global as any).ErrorUtils = originalErrorUtils;
   });
 
   describe('install()', () => {

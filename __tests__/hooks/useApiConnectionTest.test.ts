@@ -1,60 +1,62 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react-native';
 import { useApiConnectionTest } from '@/hooks/useApiConnectionTest';
-import { useHealthCheck } from '@/hooks/api';
-import { ToastUtils } from '@/utils/toast-utils';
+import * as apiService from '@/services/api';
+import { UploadUtils } from '@/utils/upload-utils';
 
-jest.mock('@/hooks/api');
-jest.mock('@/utils/toast-utils');
+jest.mock('@/services/api');
+jest.mock('@/utils/upload-utils');
 
 describe('useApiConnectionTest', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  test('runs health check on mount', () => {
-    (useHealthCheck as jest.Mock).mockReturnValue({
-      isSuccess: true,
-      isError: false,
-    });
+  test('runs health check on mount', async () => {
+    const mockHealthData = { status: 'healthy', model_ready: true };
+    (apiService.getHealthCheck as jest.Mock).mockResolvedValue(mockHealthData);
 
     renderHook(() => useApiConnectionTest());
 
-    expect(useHealthCheck).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(apiService.getHealthCheck).toHaveBeenCalled();
+    });
   });
 
-  test('shows error toast only on failure', () => {
-    (useHealthCheck as jest.Mock).mockReturnValue({
-      isSuccess: false,
-      isError: true,
-      error: new Error('Connection failed'),
-    });
+  test('shows error toast only on failure', async () => {
+    (apiService.getHealthCheck as jest.Mock).mockRejectedValue(new Error('Connection failed'));
 
     renderHook(() => useApiConnectionTest());
 
-    expect(ToastUtils.error).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(UploadUtils.showApiConnectionError).toHaveBeenCalled();
+    });
   });
 
-  test('no success toast (non-intrusive behavior)', () => {
-    (useHealthCheck as jest.Mock).mockReturnValue({
-      isSuccess: true,
-      isError: false,
-    });
+  test('no success toast (non-intrusive behavior)', async () => {
+    const mockHealthData = { status: 'healthy', model_ready: true };
+    (apiService.getHealthCheck as jest.Mock).mockResolvedValue(mockHealthData);
 
     renderHook(() => useApiConnectionTest());
 
-    expect(ToastUtils.success).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(apiService.getHealthCheck).toHaveBeenCalled();
+    });
+
+    expect(UploadUtils.showApiConnectionError).not.toHaveBeenCalled();
   });
 
-  test('logs health check result', () => {
+  test('logs health check result', async () => {
     const consoleSpy = jest.spyOn(console, 'log');
-
-    (useHealthCheck as jest.Mock).mockReturnValue({
-      isSuccess: true,
-      isError: false,
-    });
+    const mockHealthData = { status: 'healthy', model_ready: true };
+    (apiService.getHealthCheck as jest.Mock).mockResolvedValue(mockHealthData);
 
     renderHook(() => useApiConnectionTest());
 
-    expect(consoleSpy).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[UploadScreen]'),
+        expect.anything()
+      );
+    });
   });
 });

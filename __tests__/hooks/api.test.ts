@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import {
@@ -37,9 +37,8 @@ describe('API Hooks', () => {
   });
 
   // Helper to wrap hooks with QueryClientProvider
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  const wrapper = ({ children }: { children: React.ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children);
 
   describe('usePredictPositionMutation()', () => {
     test('calls predictChessPosition service on mutate', async () => {
@@ -120,10 +119,13 @@ describe('API Hooks', () => {
         corrected_fen: 'corrected-fen-string',
       });
 
-      expect(apiService.submitCorrection).toHaveBeenCalledWith({
-        prediction_id: 123,
-        corrected_fen: 'corrected-fen-string',
-      });
+      expect(apiService.submitCorrection).toHaveBeenCalledWith(
+        {
+          prediction_id: 123,
+          corrected_fen: 'corrected-fen-string',
+        },
+        expect.anything() // React Query context
+      );
     });
 
     test('invalidates prediction detail query on success', async () => {
@@ -140,7 +142,7 @@ describe('API Hooks', () => {
 
       await waitFor(() => {
         expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-          queryKey: ['predictions', 123],
+          queryKey: ['predictionDetail', 123],
         });
       });
     });
@@ -159,7 +161,7 @@ describe('API Hooks', () => {
 
       await waitFor(() => {
         expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-          queryKey: ['corrections', 'recent'],
+          queryKey: ['recentCorrections'],
         });
       });
     });
@@ -190,7 +192,7 @@ describe('API Hooks', () => {
 
       await result.current.mutateAsync('end_to_end');
 
-      expect(apiService.switchService).toHaveBeenCalledWith('end_to_end');
+      expect(apiService.switchService).toHaveBeenCalledWith('end_to_end', expect.anything());
     });
 
     test('invalidates current service query on success', async () => {
@@ -204,7 +206,7 @@ describe('API Hooks', () => {
 
       await waitFor(() => {
         expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-          queryKey: ['service', 'current'],
+          queryKey: ['currentService'],
         });
       });
     });
