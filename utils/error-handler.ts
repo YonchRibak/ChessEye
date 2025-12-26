@@ -33,10 +33,12 @@ export class GlobalErrorHandler {
       ErrorUtils.setGlobalHandler((error: Error, isFatal?: boolean) => {
         // Check if this is a chess.js error from illegal positions
         const isChessError =
-          error?.message?.includes("Cannot read property 'type'") ||
           error?.message?.includes('chess.js') ||
           error?.stack?.includes('Chess#') ||
-          error?.stack?.includes('react-native-chessboard');
+          error?.stack?.includes('chess-board-editor') ||
+          // Only treat generic property errors as chess errors if stack trace confirms it
+          (error?.message?.includes("Cannot read property 'type'") &&
+            (error?.stack?.includes('Chess') || error?.stack?.includes('chess')));
 
         if (isChessError) {
           console.warn('[GlobalErrorHandler] Caught chess.js error (non-fatal):', error.message);

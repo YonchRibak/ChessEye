@@ -47,22 +47,56 @@ describe('GlobalErrorHandler', () => {
   });
 
   describe('Error handling', () => {
-    test('catches chess.js errors with "Cannot read property type"', () => {
+    test('catches errors with "Cannot read property type" and Chess in stack trace', () => {
       GlobalErrorHandler.install();
       const errorHandler = mockSetGlobalHandler.mock.calls[0][0];
 
       const chessError = new Error("Cannot read property 'type' of null");
+      chessError.stack = 'at Chess.validateFen (chess.js:123)';
       expect(() => errorHandler(chessError, false)).not.toThrow();
     });
 
-    test('catches errors with chess.js in stack trace', () => {
+    test('catches errors with chess.js in message', () => {
+      GlobalErrorHandler.install();
+      const errorHandler = mockSetGlobalHandler.mock.calls[0][0];
+
+      const error = new Error('Error in chess.js library');
+      expect(() => errorHandler(error, false)).not.toThrow();
+    });
+
+    test('catches errors with Chess# in stack trace', () => {
       GlobalErrorHandler.install();
       const errorHandler = mockSetGlobalHandler.mock.calls[0][0];
 
       const error = new Error('Some error');
-      error.stack = 'at Chess.validateFen (chess.js:123)';
+      error.stack = 'at Chess#move (node_modules/chess.js/chess.js:456)';
 
       expect(() => errorHandler(error, false)).not.toThrow();
+    });
+
+    test('catches errors with chess-board-editor in stack trace', () => {
+      GlobalErrorHandler.install();
+      const errorHandler = mockSetGlobalHandler.mock.calls[0][0];
+
+      const error = new Error('Board error');
+      error.stack = 'at EditableBoard (react-native-chess-board-editor/index.js:100)';
+
+      expect(() => errorHandler(error, false)).not.toThrow();
+    });
+
+    test('does NOT catch generic "Cannot read property type" errors without chess stack', () => {
+      const mockOriginalHandler = jest.fn();
+      mockGetGlobalHandler.mockReturnValue(mockOriginalHandler);
+
+      GlobalErrorHandler.install();
+      const errorHandler = mockSetGlobalHandler.mock.calls[0][0];
+
+      const genericError = new Error("Cannot read property 'type' of null");
+      genericError.stack = 'at someOtherFunction (myapp.js:123)';
+      errorHandler(genericError, false);
+
+      // Should pass to original handler, not suppress
+      expect(mockOriginalHandler).toHaveBeenCalledWith(genericError, false);
     });
 
     test('passes non-chess errors to original handler', () => {
