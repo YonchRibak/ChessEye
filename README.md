@@ -30,6 +30,7 @@ ChessEye combines computer vision and machine learning to bridge the gap between
 - **Chess Library:** [react-native-chess-board-editor](https://github.com/YonchRibak/react-native-chess-board-editor), chess.js
 - **HTTP Client:** Axios with custom interceptors
 - **Animation:** react-native-reanimated
+- **Testing:** Jest, Testing Library, jest-expo (~110 tests, 70-80% coverage)
 
 ### Backend
 - **Framework:** FastAPI
@@ -99,7 +100,61 @@ npm run android        # Start on Android emulator/device
 npm run ios            # Start on iOS simulator/device
 npm run web            # Start web version
 npm run lint           # Run ESLint
+npm test               # Run all tests
+npm run test:watch     # Run tests in watch mode
+npm run test:coverage  # Run tests with coverage report
 npm run reset-project  # Reset project to blank slate
+```
+
+## Testing
+
+ChessEye uses a **pragmatic testing strategy** focused on business logic over presentation:
+
+- **~110 tests** achieving **70-80% overall coverage**
+- **Framework:** Jest with Testing Library and jest-expo preset
+- **Coverage Targets:**
+  - Utils: 80-90% (chess validation, FEN parsing, Lichess integration)
+  - Services: 80-90% (API layer, Axios interceptors, error handling)
+  - Hooks: 70-80% (React Query hooks, useImageUpload, useSubmissionFlow)
+  - Components: 30-50% (logic only, not presentation)
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run in watch mode (during development)
+npm run test:watch
+
+# Run with coverage report
+npm run test:coverage
+
+# Run specific test file
+npm test -- chess-utils.test.ts
+
+# Run tests matching pattern
+npm test -- --testNamePattern="validateFen"
+```
+
+### Test Organization
+
+```
+__tests__/
+├── utils/
+│   ├── chess-utils.test.ts           # 26 tests - FEN validation, position checking
+│   ├── prediction-utils.test.ts      # 7 tests - Position validation aggregation
+│   ├── lichess-utils.test.ts         # 10 tests - URL generation, FEN encoding
+│   └── error-handler.test.ts         # 7 tests - Global error handling
+├── services/
+│   └── api.test.ts                   # 20+ tests - Axios interceptor, error transformation
+├── hooks/
+│   ├── api.test.ts                   # 15+ tests - React Query hooks
+│   ├── useImageUpload.test.ts        # 6 tests - Image upload flow
+│   ├── useSubmissionFlow.test.ts     # 8 tests - State machine testing
+│   └── useApiConnectionTest.test.ts  # 4 tests - Health check on mount
+└── components/
+    └── ServiceToggler.test.tsx       # 8 tests - Component logic
 ```
 
 ## Project Structure
@@ -141,6 +196,13 @@ ChessEye/
 │   └── AppNavigator.tsx
 ├── config/            # App configuration
 │   └── queryClient.ts
+├── __tests__/         # Test files (~110 tests)
+│   ├── utils/         # Utility function tests
+│   ├── services/      # API service tests
+│   ├── hooks/         # Custom hook tests
+│   └── components/    # Component logic tests
+├── knowledge/         # Documentation
+│   └── tests/         # Comprehensive testing guides
 └── assets/            # Static assets (images, fonts)
 ```
 
