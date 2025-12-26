@@ -42,7 +42,8 @@ app-example
 /ios
 /android
 
-# Claude code 
+# Claude code
 .claude/
 knowledge/
-CLAUDE.md   
+CLAUDE.md
+interview_prep/   

@@ -8,7 +8,11 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:debug": "jest --detectOpenHandles"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -51,11 +55,22 @@
     "tamagui": "^1.138.6"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/react-native": "^12.9.0",
     "@types/chess.js": "^0.13.7",
+    "@types/jest": "^29.5.14",
     "@types/react": "~19.1.0",
+    "babel-jest": "^30.2.0",
     "dotenv": "^17.2.3",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
+    "jest": "^29.7.0",
+    "jest-expo": "^52.0.6",
+    "react-test-renderer": "^19.1.0",
     "typescript": "~5.9.2"
   },
   "private": true
