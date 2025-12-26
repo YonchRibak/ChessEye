@@ -41,6 +41,7 @@ module.exports = {
           },
         },
       ],
+      'expo-web-browser',
     ],
     experiments: {
       typedRoutes: true,
