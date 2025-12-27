@@ -1,7 +1,8 @@
 import React from 'react';
 import { Image } from 'react-native';
 import { Text, XStack } from 'tamagui';
-import { COLORS } from '../../constants/colors';
+
+import { COLORS } from '@/constants/theme';
 import { HamburgerMenu } from './hamburger-menu';
 
 /**
@@ -44,8 +45,8 @@ export function Navbar() {
       <XStack flex={1} alignItems="center" justifyContent="center">
         <Text
           fontSize="$7"
-          fontWeight="700"
-          color="$gray12"
+          fontWeight="bold"
+          color={COLORS.PRIMARY}
         >
           ChessEye
         </Text>

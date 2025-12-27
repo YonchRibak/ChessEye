@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 import { BoardEditor } from 'react-native-chess-board-editor';
 import { YStack } from 'tamagui';
+
+import { COLORS } from '@/constants/theme';
 import { DetectionFailedMessage } from '../components/prediction/DetectionFailedMessage';
 import { EmptyBoardMessage } from '../components/prediction/EmptyBoardMessage';
 import { PositionValidationCard } from '../components/prediction/PositionValidationCard';
@@ -89,7 +91,7 @@ export default function PredictionScreen() {
     <ScrollView>
       <YStack
         flex={1}
-        backgroundColor="$background"
+        backgroundColor={COLORS.PRIMARY_BACKGROUND}
         paddingHorizontal="$4"
         paddingVertical="$6"
         gap="$4"

@@ -9,6 +9,8 @@ import { StyleSheet } from 'react-native';
 import type { ToastConfigParams } from 'react-native-toast-message';
 import { Text, XStack, YStack } from 'tamagui';
 
+import { TOAST_COLORS, COLORS } from '@/constants/theme';
+
 /**
  * Icon configuration for each toast variant
  */
@@ -19,32 +21,7 @@ const TOAST_ICONS = {
   info: 'information-circle' as const,
 };
 
-/**
- * Color configuration matching Tamagui design tokens
- * Using actual color values since Tamagui tokens don't work in StyleSheet
- */
-const TOAST_COLORS = {
-  success: {
-    background: '#0072F5', // $blue10
-    text: '#FFFFFF',
-    icon: '#FFFFFF',
-  },
-  error: {
-    background: '#F31260', // $red10
-    text: '#FFFFFF',
-    icon: '#FFFFFF',
-  },
-  warning: {
-    background: '#F5A524', // $orange10
-    text: '#FFFFFF',
-    icon: '#FFFFFF',
-  },
-  info: {
-    background: '#889096', // $gray6
-    text: '#11181C', // $gray12
-    icon: '#11181C',
-  },
-};
+// Toast colors are now imported from @/constants/theme
 
 /**
  * Custom toast component for a specific variant
@@ -63,7 +40,7 @@ function CustomToast({
 
   return (
     <XStack
-      backgroundColor={colors.background}
+      backgroundColor={colors.bg}
       paddingVertical="$3"
       paddingHorizontal="$4"
       borderRadius="$3"
@@ -112,7 +89,7 @@ function CustomToast({
 const styles = StyleSheet.create({
   toastContainer: {
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: COLORS.TOAST_SHADOW,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

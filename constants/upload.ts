@@ -3,6 +3,8 @@
  * Centralizes all text, messages, and UI values used in upload functionality
  */
 
+import { COLORS } from './theme';
+
 export const UPLOAD_CONSTANTS = {
   // Instructions
   INSTRUCTIONS: {
@@ -46,6 +48,6 @@ export const UPLOAD_CONSTANTS = {
 
   // Colors
   COLORS: {
-    ICON_COLOR: '#0080ff',
+    ICON_COLOR: COLORS.PRIMARY,
   },
 } as const;

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Label, Switch as TamaguiSwitch, type SwitchProps as TamaguiSwitchProps, XStack } from 'tamagui';
 
+import { COLORS } from '@/constants/theme';
+
 export interface ToggleProps extends Omit<TamaguiSwitchProps, 'checked' | 'onCheckedChange'> {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
@@ -36,11 +38,11 @@ export function Toggle({
       onCheckedChange={onCheckedChange}
       disabled={disabled}
       opacity={disabled ? 0.5 : 1}
-      backgroundColor={checked ? '$blue10' : '$gray6'}
+      backgroundColor={checked ? COLORS.TOGGLE_TRACK_ACTIVE : COLORS.TOGGLE_TRACK_INACTIVE}
       {...props}
     >
       <TamaguiSwitch.Thumb
-        backgroundColor="white"
+        backgroundColor={COLORS.TOGGLE_THUMB}
         animation="quick"
       />
     </TamaguiSwitch>

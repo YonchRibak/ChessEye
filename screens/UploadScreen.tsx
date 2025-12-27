@@ -1,5 +1,7 @@
 import React from 'react';
 import { YStack } from 'tamagui';
+
+import { COLORS } from '@/constants/theme';
 import { ImageSourceButton } from '../components/upload/ImageSourceButton';
 import { InstructionText } from '../components/upload/InstructionText';
 import { ProcessingIndicator } from '../components/upload/ProcessingIndicator';
@@ -21,7 +23,7 @@ export default function UploadScreen() {
   return (
     <YStack
       flex={1}
-      backgroundColor="$background"
+      backgroundColor={COLORS.PRIMARY_BACKGROUND}
       paddingHorizontal="$4"
       paddingVertical="$6"
       justifyContent="center"

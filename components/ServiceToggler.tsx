@@ -1,6 +1,8 @@
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
+
+import { COLORS } from '@/constants/theme';
 import { useCurrentService, useServiceSwitchMutation } from '../hooks/api';
 import { Button } from './ui/button';
 
@@ -146,7 +148,7 @@ export function ServiceToggler({ onSwitchSuccess }: ServiceTogglerProps = {}) {
         <Text fontSize="$2" color="$gray11" fontWeight="500">
           Model:
         </Text>
-        <Text fontSize="$3" fontWeight="700" color="$blue10">
+        <Text fontSize="$3" fontWeight="700" color={COLORS.PRIMARY}>
           {getDisplayName(actualServiceType)}
         </Text>
         <Button

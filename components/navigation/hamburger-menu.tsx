@@ -4,6 +4,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Pressable } from 'react-native';
 import { Text, YStack } from 'tamagui';
+
+import { COLORS } from '@/constants/theme';
 import type { RootStackParamList } from '../../navigation/AppNavigator';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -71,7 +73,7 @@ export function HamburgerMenu() {
             <Ionicons
               name={isOpen ? 'close' : 'menu'}
               size={28}
-              color="#000000"
+              color={COLORS.PRIMARY}
             />
           </YStack>
         )}
@@ -83,7 +85,7 @@ export function HamburgerMenu() {
           position="absolute"
           top="$6"
           right={0}
-          backgroundColor="$background"
+          backgroundColor={COLORS.PRIMARY_BACKGROUND}
           borderRadius="$4"
           borderWidth={1}
           borderColor="$gray6"

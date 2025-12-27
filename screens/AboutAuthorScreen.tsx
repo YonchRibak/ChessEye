@@ -1,6 +1,8 @@
 import React from 'react';
 import { Image, Linking, ScrollView } from 'react-native';
-import { Text, YStack, Button, XStack } from 'tamagui';
+import { Button, Text, YStack } from 'tamagui';
+
+import { COLORS } from '@/constants/theme';
 import { ABOUT_AUTHOR_CONTENT } from '../constants/aboutContent';
 
 /**
@@ -18,12 +20,12 @@ export default function AboutAuthorScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: '$background' }}
+      style={{ flex: 1, backgroundColor: COLORS.PRIMARY_BACKGROUND }}
       contentContainerStyle={{ flexGrow: 1 }}
     >
       <YStack
         flex={1}
-        backgroundColor="$background"
+        backgroundColor={COLORS.PRIMARY_BACKGROUND}
         paddingHorizontal="$4"
         paddingVertical="$6"
         alignItems="center"
@@ -41,7 +43,7 @@ export default function AboutAuthorScreen() {
         />
 
         {/* Author Name */}
-        <Text fontSize="$8" fontWeight="700" color="$gray12" textAlign="center">
+        <Text fontSize="$8" fontWeight="700" color={COLORS.PRIMARY} textAlign="center">
           {ABOUT_AUTHOR_CONTENT.name}
         </Text>
 

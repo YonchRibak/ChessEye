@@ -2,6 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Linking, Pressable } from 'react-native';
 import { Text, XStack } from 'tamagui';
+
+import { COLORS } from '@/constants/theme';
 import { TOAST_CONSTANTS } from '../../constants/toast';
 import { ToastUtils } from '../../utils/toast-utils';
 
@@ -56,27 +58,27 @@ export function ExternalLinkButton({
     <Pressable onPress={handlePress}>
       {({ pressed }) => (
         <XStack
-          backgroundColor={isPrimary ? '$blue10' : 'transparent'}
+          backgroundColor={isPrimary ? COLORS.BUTTON_PRIMARY_BG : COLORS.BUTTON_OUTLINE_BG}
           paddingVertical="$3"
           paddingHorizontal="$4"
           borderRadius="$3"
           borderWidth={isPrimary ? 0 : 1}
-          borderColor={isPrimary ? undefined : '$blue10'}
+          borderColor={isPrimary ? undefined : COLORS.BUTTON_OUTLINE_BORDER}
           alignItems="center"
           justifyContent="center"
           gap="$2"
           opacity={pressed ? 0.7 : 1}
           hoverStyle={{
-            backgroundColor: isPrimary ? '$blue11' : '$blue2',
+            backgroundColor: isPrimary ? COLORS.BUTTON_PRIMARY_HOVER : COLORS.BUTTON_OUTLINE_HOVER_BG,
           }}
         >
           <Ionicons
             name={icon}
             size={18}
-            color={isPrimary ? 'white' : '#2563EB'}
+            color={isPrimary ? COLORS.ICON_ON_PRIMARY : COLORS.BUTTON_OUTLINE_ICON}
           />
           <Text
-            color={isPrimary ? 'white' : '$blue10'}
+            color={isPrimary ? COLORS.BUTTON_PRIMARY_TEXT : COLORS.BUTTON_OUTLINE_TEXT}
             fontSize="$4"
             fontWeight="600"
           >

@@ -2,6 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
+
+import { COLORS } from '@/constants/theme';
 import { AboutCardData } from '../../types/about';
 
 interface InfoCardProps extends AboutCardData {
@@ -35,7 +37,7 @@ export function InfoCard({
     <Pressable onPress={onPress}>
       {({ pressed }) => (
         <YStack
-          backgroundColor="$background"
+          backgroundColor={COLORS.PRIMARY_BACKGROUND}
           borderRadius="$4"
           padding="$4"
           borderWidth={1}
@@ -47,7 +49,7 @@ export function InfoCard({
           elevation={1}
           opacity={pressed ? 0.7 : 1}
           hoverStyle={{
-            borderColor: '$blue8',
+            borderColor: COLORS.CARD_BORDER,
             shadowOpacity: 0.1,
           }}
         >
@@ -56,8 +58,7 @@ export function InfoCard({
               <Text
                 fontSize="$6"
                 fontWeight="600"
-                color="$gray12"
-                numberOfLines={2}
+                color= {COLORS.PRIMARY}                numberOfLines={2}
               >
                 {title}
               </Text>
@@ -74,7 +75,7 @@ export function InfoCard({
             <Ionicons
               name="chevron-forward"
               size={20}
-              color="#6B7280"
+              color={COLORS.ICON_CHEVRON}
               style={{ marginTop: 2 }}
             />
           </XStack>

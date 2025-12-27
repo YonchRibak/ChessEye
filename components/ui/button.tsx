@@ -1,5 +1,7 @@
 import React from 'react';
 import { Button as TamaguiButton, type ButtonProps as TamaguiButtonProps, Text } from 'tamagui';
+
+import { COLORS } from '@/constants/theme';
 import { UiUtils } from './utils/ui-utils';
 export interface ButtonProps extends Omit<TamaguiButtonProps, 'variant'> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -28,14 +30,17 @@ export function Button({
     const getTextColor = () => {
       switch (variant) {
         case 'primary':
+          return COLORS.BUTTON_PRIMARY_TEXT;
         case 'secondary':
+          return COLORS.BUTTON_SECONDARY_TEXT;
         case 'danger':
-          return 'white';
+          return COLORS.BUTTON_DANGER_TEXT;
         case 'outline':
+          return COLORS.BUTTON_OUTLINE_TEXT;
         case 'ghost':
-          return '$blue10';
+          return COLORS.BUTTON_GHOST_TEXT;
         default:
-          return 'white';
+          return COLORS.BUTTON_PRIMARY_TEXT;
       }
     };
 

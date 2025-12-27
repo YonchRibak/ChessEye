@@ -1,39 +1,41 @@
+import { COLORS } from '@/constants/theme';
+
 export class UiUtils {
     public static getButtonVariantStyles = (variant: string) => {
         switch (variant) {
         case 'primary':
             return {
-            backgroundColor: '$blue10',
-            borderColor: '$blue10',
-            hoverStyle: { backgroundColor: '$blue11' },
-            pressStyle: { backgroundColor: '$blue9' },
+            backgroundColor: COLORS.BUTTON_PRIMARY_BG,
+            borderColor: COLORS.BUTTON_PRIMARY_BG,
+            hoverStyle: { backgroundColor: COLORS.BUTTON_PRIMARY_HOVER },
+            pressStyle: { backgroundColor: COLORS.BUTTON_PRIMARY_PRESS },
             };
         case 'secondary':
             return {
-            backgroundColor: '$gray10',
-            borderColor: '$gray10',
-            hoverStyle: { backgroundColor: '$gray11' },
-            pressStyle: { backgroundColor: '$gray9' },
+            backgroundColor: COLORS.BUTTON_SECONDARY_BG,
+            borderColor: COLORS.BUTTON_SECONDARY_BG,
+            hoverStyle: { backgroundColor: COLORS.HOVER_STATE },
+            pressStyle: { backgroundColor: COLORS.PRESS_STATE },
             };
         case 'outline':
             return {
-            backgroundColor: 'transparent',
+            backgroundColor: COLORS.BUTTON_OUTLINE_BG,
             borderWidth: 1,
-            borderColor: '$blue10',
-            hoverStyle: { backgroundColor: '$blue2' },
-            pressStyle: { backgroundColor: '$blue3' },
+            borderColor: COLORS.BUTTON_OUTLINE_BORDER,
+            hoverStyle: { backgroundColor: COLORS.BUTTON_OUTLINE_HOVER_BG },
+            pressStyle: { backgroundColor: COLORS.HOVER_STATE },
             };
         case 'ghost':
             return {
-            backgroundColor: 'transparent',
-            borderColor: 'transparent',
+            backgroundColor: COLORS.BUTTON_GHOST_BG,
+            borderColor: COLORS.TRANSPARENT,
             hoverStyle: { backgroundColor: '$gray3' },
             pressStyle: { backgroundColor: '$gray4' },
             };
         case 'danger':
             return {
-            backgroundColor: '$red10',
-            borderColor: '$red10',
+            backgroundColor: COLORS.BUTTON_DANGER_BG,
+            borderColor: COLORS.BUTTON_DANGER_BG,
             hoverStyle: { backgroundColor: '$red11' },
             pressStyle: { backgroundColor: '$red9' },
             };

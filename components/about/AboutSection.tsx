@@ -2,6 +2,8 @@ import React, { ReactNode } from 'react';
 import { ScrollView } from 'react-native';
 import { Text, YStack } from 'tamagui';
 
+import { COLORS } from '@/constants/theme';
+
 interface AboutSectionProps {
   /** Section header/title */
   header: string;
@@ -39,7 +41,7 @@ export function AboutSection({
     >
       <YStack
         flex={1}
-        backgroundColor="$background"
+        backgroundColor={COLORS.PRIMARY_BACKGROUND}
         paddingHorizontal={padding}
         paddingVertical="$6"
         gap="$5"
@@ -56,7 +58,7 @@ export function AboutSection({
             <Text
               fontSize="$9"
               fontWeight="700"
-              color="$gray12"
+              color={COLORS.PRIMARY}
               lineHeight={40}
               textAlign="center"
             >
