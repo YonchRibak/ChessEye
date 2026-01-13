@@ -2,18 +2,22 @@ require('dotenv').config();
 
 module.exports = {
   expo: {
+    owner: "yonchribak",
     name: 'ChessEye',
-    slug: 'ChessEye',
+    slug: 'chesseye',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/chesseye-logo.png',
-    scheme: 'chesseye',
+    scheme: 'chessEye',
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
+      bundleIdentifier: 'com.yonchribak.chesseye', // Replace with your desired bundle identifier
     },
     android: {
+
+        package: "com.yonchribak.chesseye", // Replace with your desired package name
       adaptiveIcon: {
         backgroundColor: '#E6F4FE',
         foregroundImage: './assets/images/android-icon-foreground.png',
@@ -48,7 +52,10 @@ module.exports = {
       reactCompiler: true,
     },
     extra: {
-      apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:8081',
+      apiBaseUrl: process.env.API_BASE_URL || 'https://board2fen-api-2-3w4qy.sevalla.app',
+      "eas": {
+        "projectId": "34786e9c-b3cc-4214-b030-458e7c9740a8"
+      }
     },
   },
 };
